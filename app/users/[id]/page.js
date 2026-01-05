@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import AdminBanButton from '@/components/AdminBanButton'
 import AdminWipeButton from '@/components/AdminWipeButton'
 import ReviewCard from '@/components/ReviewCard'
+import RatingDistribution from '@/components/RatingDistribution'
 
 export const revalidate = 0
 
@@ -101,6 +102,10 @@ export default async function PublicProfilePage({ params }) {
                         <AdminBanButton userId={profile.id} initialIsBanned={profile.is_banned} />
                     </div>
                 )}
+
+                <div style={{ marginTop: '4rem' }}>
+                    <RatingDistribution reviews={reviews} />
+                </div>
             </div>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '4rem' }}>

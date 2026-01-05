@@ -193,8 +193,14 @@ export default function EditReviewPage({ params }) {
         e.preventDefault()
         setSaving(true)
 
+        const { toTitleCase } = await import('@/utils/format')
+        const normalizedArtist = toTitleCase(formData.artist_name)
+        const normalizedAlbum = toTitleCase(formData.album_name)
+
         const updatedReview = {
             ...formData,
+            artist_name: normalizedArtist,
+            album_name: normalizedAlbum,
             sub_genres: subGenres,
             cover_image_url: coverImageUrl || formData.cover_image_url,
             rating: parseFloat(formData.rating),

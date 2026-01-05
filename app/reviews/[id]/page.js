@@ -44,24 +44,26 @@ export default async function ReviewDetailPage({ params }) {
         const { data: authData } = await supabase.auth.getUser()
         const user = authData?.user || null
 
-        const { data: review, error } = await supabase
+        // 1. Fetch the primary review
+        const { data: primaryReview } = await supabase
             .from('reviews')
-            .select(`
-                *,
-                profiles (
-                    username
-                )
-            `)
+            .select('*, profiles(username)')
             .eq('id', id)
             .maybeSingle()
 
-        if (error || !review) {
-            notFound()
-        }
+        if (!primaryReview) notFound()
+
+        // 2. Fetch ALL reviews for this artist and album
+        const { data: allReviews } = await supabase
+            .from('reviews')
+            .select('*, profiles(username)')
+            .eq('artist_name', primaryReview.artist_name)
+            .eq('album_name', primaryReview.album_name)
+            .order('created_at', { ascending: false })
 
         return (
             <article>
-                {/* Header / Hero for the Review */}
+                {/* Header / Hero for the Album */}
                 <section className="section" style={{ background: 'var(--secondary)', borderBottom: '1px solid var(--border)', padding: '3rem 0' }}>
                     <div className="container" style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}>
                         <div style={{
@@ -74,10 +76,10 @@ export default async function ReviewDetailPage({ params }) {
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             overflow: 'hidden'
                         }}>
-                            {review.cover_image_url ? (
+                            {primaryReview.cover_image_url ? (
                                 <Image
-                                    src={review.cover_image_url}
-                                    alt={`${review.album_name} cover`}
+                                    src={primaryReview.cover_image_url}
+                                    alt={`${primaryReview.album_name} cover`}
                                     fill
                                     priority
                                     style={{ objectFit: 'cover' }}
@@ -88,22 +90,29 @@ export default async function ReviewDetailPage({ params }) {
                         </div>
                         <div>
                             <div style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
-                                {review.genre}
+                                {primaryReview.genre}
                             </div>
                             <h1 style={{ fontSize: '3.5rem', lineHeight: 1.1, marginBottom: '0.5rem' }}>
-                                {review.album_name}
+                                {primaryReview.album_name}
                             </h1>
                             <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic' }}>
-                                by {review.artist_name} <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({review.release_year || 'Unknown'})</span>
+                                by {primaryReview.artist_name} <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({primaryReview.release_year || 'Unknown'})</span>
                             </div>
 
+                            {/* Aggregated Score Badge if multiple */}
+                            {allReviews?.length > 1 && (
+                                <div style={{ display: 'inline-block', background: 'var(--primary)', color: 'white', padding: '0.3rem 0.8rem', borderRadius: '4px', fontSize: '0.9rem', fontWeight: 700, marginBottom: '2rem' }}>
+                                    {allReviews.length} Reviews • Avg: {(allReviews.reduce((acc, r) => acc + r.rating, 0) / allReviews.length).toFixed(1)}
+                                </div>
+                            )}
+
                             {/* Streaming Links */}
-                            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem' }}>
+                            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                                 <a
-                                    href={review.spotify_url || `https://open.spotify.com/search/${encodeURIComponent(review.artist_name + ' ' + review.album_name)}`}
+                                    href={primaryReview.spotify_url || `https://open.spotify.com/search/${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    title={review.spotify_url ? "Listen on Spotify" : "Search on Spotify"}
+                                    title={primaryReview.spotify_url ? "Listen on Spotify" : "Search on Spotify"}
                                     style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
                                 >
                                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -111,10 +120,10 @@ export default async function ReviewDetailPage({ params }) {
                                     </svg>
                                 </a>
                                 <a
-                                    href={review.apple_music_url || `https://music.apple.com/us/search?term=${encodeURIComponent(review.artist_name + ' ' + review.album_name)}`}
+                                    href={primaryReview.apple_music_url || `https://music.apple.com/us/search?term=${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    title={review.apple_music_url ? "Listen on Apple Music" : "Search on Apple Music"}
+                                    title={primaryReview.apple_music_url ? "Listen on Apple Music" : "Search on Apple Music"}
                                     style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
                                 >
                                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -123,10 +132,10 @@ export default async function ReviewDetailPage({ params }) {
                                     </svg>
                                 </a>
                                 <a
-                                    href={review.youtube_music_url || `https://music.youtube.com/search?q=${encodeURIComponent(review.artist_name + ' ' + review.album_name)}`}
+                                    href={primaryReview.youtube_music_url || `https://music.youtube.com/search?q=${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    title={review.youtube_music_url ? "Listen on YouTube Music" : "Search on YouTube Music"}
+                                    title={primaryReview.youtube_music_url ? "Listen on YouTube Music" : "Search on YouTube Music"}
                                     style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
                                 >
                                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -134,63 +143,68 @@ export default async function ReviewDetailPage({ params }) {
                                     </svg>
                                 </a>
                             </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div style={{ color: 'var(--primary)', fontSize: '2rem', fontWeight: 700 }}>
-                                    {review.rating?.toFixed(1) || '0.0'}
-                                </div>
-                                <div style={{ width: '1px', height: '30px', background: '#444' }}></div>
-                                <div style={{ color: '#888' }}>
-                                    Reviewed by <Link href={`/users/${review.user_id}`} className="hover-underline" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>
-                                        <strong style={{ color: 'inherit' }}>{review.profiles?.username || 'Unknown User'}</strong>
-                                    </Link>
-                                </div>
-                                <div style={{ color: '#666', fontSize: '0.9rem' }}>
-                                    {new Date(review.created_at).toLocaleDateString()}
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Content Body */}
-                <section className="container section" style={{ maxWidth: '800px', margin: '0 auto' }}>
-                    <div style={{ marginTop: '3rem', fontSize: '1.1rem', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
-                        {review.content}
-                    </div>
+                <div className="container" style={{ maxWidth: '800px', margin: '4rem auto' }}>
+                    {/* Render Each Review Sequentially */}
+                    {allReviews.map((rev, index) => (
+                        <div key={rev.id} style={{
+                            paddingBottom: '4rem',
+                            marginBottom: '4rem',
+                            borderBottom: index !== allReviews.length - 1 ? '1px solid #1a1a1a' : 'none'
+                        }}>
+                            {/* Reviewer Meta */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+                                <div style={{ color: 'var(--primary)', fontSize: '2.5rem', fontWeight: 900, lineHeight: 1 }}>
+                                    {rev.rating?.toFixed(1) || '0.0'}
+                                </div>
+                                <div style={{ width: '1px', height: '30px', background: '#333' }}></div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ color: '#888', fontSize: '0.9rem', marginBottom: '0.2rem' }}>
+                                        Reviewed by
+                                    </div>
+                                    <Link href={`/users/${rev.user_id}`} className="hover-underline" style={{ color: 'var(--foreground)', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>
+                                        {rev.profiles?.username || 'Unknown User'}
+                                    </Link>
+                                </div>
+                                <div style={{ color: '#666', fontSize: '0.85rem' }}>
+                                    {new Date(rev.created_at).toLocaleDateString()}
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div style={{ fontSize: '1.1rem', lineHeight: 1.8, whiteSpace: 'pre-wrap', color: '#ccc' }}>
+                                {rev.content}
+                            </div>
+
+                            {/* Individual Review Actions */}
+                            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '0.8rem' }}>
+                                {(user?.id === rev.user_id || user?.email?.toLowerCase().trim() === 'id01035206992@gmail.com') && (
+                                    <Link
+                                        href={`/reviews/edit/${rev.id}`}
+                                        className="btn btn-outline"
+                                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', borderColor: '#444' }}
+                                    >
+                                        Edit
+                                    </Link>
+                                )}
+                                <AdminUpdateLinksButton review={rev} userEmail={user?.email} />
+                                <AdminFeatureButton reviewId={rev.id} userEmail={user?.email} />
+                                <AdminDeleteButton table="reviews" id={rev.id} redirectTo="/reviews" userEmail={user?.email} />
+                            </div>
+                        </div>
+                    ))}
 
                     <CommentSection reviewId={id} user={user} />
 
-                    <div style={{ marginTop: '4rem', resize: 'none', borderTop: '1px solid var(--border)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
                         <Link href="/reviews" className="btn btn-outline">
-                            ← 목록으로 돌아가기
+                            ← Back to Reviews
                         </Link>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            {(user?.id === review.user_id || user?.email?.toLowerCase().trim() === 'id01035206992@gmail.com') && (
-                                <Link
-                                    href={`/reviews/edit/${id}`}
-                                    className="btn btn-outline"
-                                    style={{
-                                        padding: '0.5rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        borderColor: 'var(--primary)',
-                                        color: 'var(--primary)'
-                                    }}
-                                    title="수정하기"
-                                >
-                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                    </svg>
-                                </Link>
-                            )}
-                            <AdminUpdateLinksButton review={review} userEmail={user?.email} />
-                            <AdminFeatureButton reviewId={id} userEmail={user?.email} />
-                            <AdminDeleteButton table="reviews" id={id} redirectTo="/reviews" userEmail={user?.email} />
-                        </div>
                     </div>
-                </section>
+                </div>
             </article>
         )
     } catch (e) {

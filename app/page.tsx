@@ -3,6 +3,7 @@ import Footer from '@/components/Footer'
 import ScoreGuide from '@/components/ScoreGuide'
 import ReviewCard from '@/components/ReviewCard'
 import { createClient } from '@/utils/supabase/server'
+import { groupReviews } from '@/utils/reviewAggregation'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -18,7 +19,7 @@ export default async function Home() {
 
   let results: any[] = []
   try {
-    // Parallel data fetching with defensive checks
+    // Parallel data fetching
     results = await Promise.all([
       supabase
         .from('hero_content')
@@ -42,7 +43,7 @@ export default async function Home() {
           profiles (username)
         `)
         .order('created_at', { ascending: false })
-        .limit(6),
+        .limit(30), // Fetch more for grouping
       supabase.auth.getUser()
     ])
   } catch (err) {
@@ -57,8 +58,19 @@ export default async function Home() {
 
   const heroData = results[0]?.data
   const footerData = results[1]?.data
-  const recentReviews = results[2]?.data
+  const allRawReviews = results[2]?.data || []
   const user = results[3]?.data?.user || null
+
+  // Aggregation
+  const groupedReviews = groupReviews(allRawReviews)
+  const newReviews = groupedReviews.slice(0, 4) // Top 4 grouped
+
+  // New Release (current year - 3)
+  const currentYear = new Date().getFullYear()
+  const releaseLimit = currentYear - 3
+  const newReleases = groupedReviews
+    .filter(r => parseInt(r.release_year) >= releaseLimit)
+    .slice(0, 4)
 
   const defaultHero = {
     id: 'default',
@@ -77,20 +89,41 @@ export default async function Home() {
         </div>
       )}
 
+      {/* New Review Section */}
       <section className="section container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
-          <h2 style={{ marginBottom: 0 }}>최신 리뷰</h2>
+          <h2 style={{ marginBottom: 0 }}>New Review</h2>
           <a href="/reviews" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
         </div>
 
-        <div className="grid grid-cols-3">
-          {recentReviews && recentReviews.length > 0 ? (
-            recentReviews.map((review: any) => (
+        <div className="grid grid-cols-4">
+          {newReviews.length > 0 ? (
+            newReviews.map((review: any) => (
               <ReviewCard key={review.id} review={review} />
             ))
           ) : (
-            <div style={{ gridColumn: 'span 3', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+            <div style={{ gridColumn: 'span 4', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
               <p style={{ color: '#666' }}>최근 등록된 리뷰가 없습니다.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* New Release Section */}
+      <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
+          <h2 style={{ marginBottom: 0 }}>New Release</h2>
+          <span style={{ fontSize: '0.9rem', color: '#666' }}>{releaseLimit}~{currentYear} 발매 앨범</span>
+        </div>
+
+        <div className="grid grid-cols-4">
+          {newReleases.length > 0 ? (
+            newReleases.map((review: any) => (
+              <ReviewCard key={review.id} review={review} />
+            ))
+          ) : (
+            <div style={{ gridColumn: 'span 4', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+              <p style={{ color: '#666' }}>최근 3년 내 발매된 앨범에 대한 리뷰가 없습니다.</p>
             </div>
           )}
         </div>

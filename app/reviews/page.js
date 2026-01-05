@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import ReviewCard from '@/components/ReviewCard'
 import Link from 'next/link'
+import { groupReviews } from '@/utils/reviewAggregation'
 
 export const revalidate = 0 // Disable caching for now to see new reviews immediately
 
@@ -21,6 +22,7 @@ export default async function ReviewsPage({ searchParams }) {
             )
         `)
         .order('created_at', { ascending: false })
+        .limit(100) // Increase limit for grouping
 
     if (genre) {
         query = query.eq('genre', genre)
@@ -30,16 +32,19 @@ export default async function ReviewsPage({ searchParams }) {
         query = query.or(`album_name.ilike.%${search}%,artist_name.ilike.%${search}%`)
     }
 
-    let reviews = []
+    let rawReviews = []
     let error = null
     try {
         const result = await query
-        reviews = result.data
+        rawReviews = result.data || []
         error = result.error
     } catch (e) {
         if (e.digest === 'NEXT_NOT_FOUND' || e.digest?.startsWith('NEXT_REDIRECT')) throw e
         error = e
     }
+
+    // Grouping
+    const reviews = groupReviews(rawReviews)
 
     const genres = ['Rock', 'Pop', 'Hip-Hop', 'Electronic', 'Jazz', 'Classical Music', 'K-Pop', 'Folk', 'Experimental', 'Uncategorized']
 
@@ -89,7 +94,7 @@ export default async function ReviewsPage({ searchParams }) {
                             <p style={{ marginTop: '1rem' }}>첫 번째 리뷰의 주인공이 되어보세요!</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-3">
+                        <div className="grid grid-cols-4">
                             {reviews.map(review => (
                                 <ReviewCard key={review.id} review={review} />
                             ))}

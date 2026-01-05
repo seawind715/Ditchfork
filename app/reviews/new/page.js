@@ -142,10 +142,33 @@ export default function NewReviewPage() {
             return
         }
 
+        // --- Rate Limit Check (5 reviews per 24 hours) ---
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        const { count, error: countError } = await supabase
+            .from('reviews')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .gte('created_at', twentyFourHoursAgo)
+
+        if (countError) {
+            console.error('Rate limit check error:', countError)
+        } else if (count >= 5) {
+            alert('하루에 작성할 수 있는 리뷰 개수(5개)를 초과했습니다. 내일 다시 시도해주세요!')
+            setLoading(false)
+            return
+        }
+        // ------------------------------------------------
+
+        const { toTitleCase } = await import('@/utils/format')
+        const normalizedArtist = toTitleCase(review.artist_name)
+        const normalizedAlbum = toTitleCase(review.album_name)
+
         const { error } = await supabase
             .from('reviews')
             .insert({
                 ...review,
+                artist_name: normalizedArtist,
+                album_name: normalizedAlbum,
                 user_id: user.id
             })
 
