@@ -172,7 +172,7 @@ export default function EditReviewPage({ params }) {
             // Pick the best across all stores
             const bestResult = allResults.sort((a, b) => b.score - a.score)[0]
 
-            if (bestResult && bestResult.score >= 5) {
+            if (bestResult && bestResult.score >= 2) {
                 const highResUrl = bestResult.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
                 setCoverImageUrl(highResUrl)
 
@@ -216,12 +216,15 @@ export default function EditReviewPage({ params }) {
         const { toTitleCase } = await import('@/utils/format')
         const normalizedArtist = toTitleCase(artistNameStr)
         const normalizedAlbum = toTitleCase(formData.album_name)
+        const normalizedGenre = toTitleCase(formData.genre)
+        const normalizedSubGenres = subGenres.map(g => toTitleCase(g))
 
         const updatedReview = {
             ...formData,
             artist_name: normalizedArtist,
             album_name: normalizedAlbum,
-            sub_genres: subGenres,
+            genre: normalizedGenre,
+            sub_genres: normalizedSubGenres,
             cover_image_url: coverImageUrl || formData.cover_image_url,
             rating: parseFloat(formData.rating),
             spotify_url: streamingLinks.spotify,

@@ -132,7 +132,7 @@ export default function NewReviewPage() {
             // Pick the best across all stores
             const bestResult = allResults.sort((a, b) => b.score - a.score)[0]
 
-            if (bestResult && bestResult.score >= 5) {
+            if (bestResult && bestResult.score >= 2) {
                 const highResUrl = bestResult.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
                 setCoverImageUrl(highResUrl)
 
