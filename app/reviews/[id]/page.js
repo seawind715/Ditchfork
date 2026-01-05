@@ -129,7 +129,9 @@ export default async function ReviewDetailPage({ params }) {
                             </div>
                             <div style={{ width: '1px', height: '30px', background: '#444' }}></div>
                             <div style={{ color: '#888' }}>
-                                Reviewed by <strong style={{ color: 'var(--foreground)' }}>{review.profiles?.username || 'Unknown User'}</strong>
+                                Reviewed by <Link href={`/users/${review.user_id}`} style={{ color: 'var(--foreground)', textDecoration: 'none', borderBottom: '1px solid transparent', transition: 'border-color 0.2s' }} onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'} onMouseOut={(e) => e.target.style.borderColor = 'transparent'}>
+                                    <strong style={{ color: 'inherit' }}>{review.profiles?.username || 'Unknown User'}</strong>
+                                </Link>
                             </div>
                             <div style={{ color: '#666', fontSize: '0.9rem' }}>
                                 {new Date(review.created_at).toLocaleDateString()}

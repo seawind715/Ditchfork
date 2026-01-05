@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import AdminBanButton from '@/components/AdminBanButton'
+import ReviewCard from '@/components/ReviewCard'
 
 export const revalidate = 0
 
@@ -24,45 +25,81 @@ export default async function PublicProfilePage({ params }) {
         notFound()
     }
 
+    // 3. Fetch User's Reviews
+    const { data: reviews } = await supabase
+        .from('reviews')
+        .select(`
+            *,
+            profiles (
+                username
+            )
+        `)
+        .eq('user_id', id)
+        .order('created_at', { ascending: false })
+
     return (
-        <div className="container section" style={{ maxWidth: '600px', textAlign: 'center' }}>
-            <div style={{
-                width: '120px',
-                height: '120px',
-                borderRadius: '50%',
-                background: 'var(--border)',
-                margin: '0 auto 2rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '4rem'
-            }}>
-                👤
+        <div className="container section" style={{ maxWidth: '1000px' }}>
+            <div style={{ maxWidth: '600px', margin: '0 auto 4rem', textAlign: 'center' }}>
+                <div style={{
+                    width: '120px',
+                    height: '120px',
+                    borderRadius: '50%',
+                    background: 'var(--border)',
+                    margin: '0 auto 2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '4rem',
+                    boxShadow: '0 0 20px rgba(255,0,0,0.1)'
+                }}>
+                    👤
+                </div>
+
+                <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{profile.username || '알 수 없는 사용자'}</h1>
+
+                {profile.is_banned && (
+                    <div style={{ color: 'var(--primary)', fontWeight: 'bold', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,0,0,0.1)', border: '1px solid var(--primary)' }}>
+                        🚫 이 유저는 현재 정지된 상태입니다.
+                    </div>
+                )}
+
+                <div style={{ background: '#111', padding: '2rem', border: '1px solid var(--border)', textAlign: 'left', borderRadius: '8px' }}>
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <strong style={{ color: '#888', display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', textTransform: 'uppercase' }}>성별</strong>
+                        <div style={{ fontSize: '1.2rem', fontWeight: 500 }}>{profile.gender === 'male' ? '남성' : profile.gender === 'female' ? '여성' : profile.gender === 'other' ? '기타' : '정보 없음'}</div>
+                    </div>
+
+                    <div>
+                        <strong style={{ color: '#888', display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', textTransform: 'uppercase' }}>거주지</strong>
+                        <div style={{ fontSize: '1.2rem', fontWeight: 500 }}>{profile.residence || '정보 없음'}</div>
+                    </div>
+                </div>
+
+                {isAdmin && currentUser?.id !== profile.id && (
+                    <div style={{ marginTop: '2rem' }}>
+                        <AdminBanButton userId={profile.id} initialIsBanned={profile.is_banned} />
+                    </div>
+                )}
             </div>
 
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{profile.username || '알 수 없는 사용자'}</h1>
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '4rem' }}>
+                <h2 style={{ fontSize: '2rem', marginBottom: '2rem', textAlign: 'center', fontWeight: 800 }}>
+                    <span style={{ color: 'var(--primary)' }}>{profile.username}</span>님의 리뷰 ({reviews?.length || 0})
+                </h2>
 
-            {profile.is_banned && (
-                <div style={{ color: 'var(--primary)', fontWeight: 'bold', marginBottom: '1rem' }}>
-                    🚫 이 유저는 현재 정지된 상태입니다.
-                </div>
-            )}
-
-            <div style={{ background: '#151515', padding: '2rem', border: '1px solid var(--border)', textAlign: 'left' }}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <strong style={{ color: '#888', display: 'block', marginBottom: '0.5rem' }}>성별</strong>
-                    <div style={{ fontSize: '1.2rem' }}>{profile.gender === 'male' ? '남성' : profile.gender === 'female' ? '여성' : profile.gender === 'other' ? '기타' : '정보 없음'}</div>
-                </div>
-
-                <div>
-                    <strong style={{ color: '#888', display: 'block', marginBottom: '0.5rem' }}>거주지</strong>
-                    <div style={{ fontSize: '1.2rem' }}>{profile.residence || '정보 없음'}</div>
-                </div>
+                {reviews && reviews.length > 0 ? (
+                    <div className="grid grid-3">
+                        {reviews.map(review => (
+                            <ReviewCard key={review.id} review={review} />
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ textAlign: 'center', color: '#666', padding: '6rem 0', background: '#0a0a0a', border: '1px dashed #333', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💿</div>
+                        아직 작성한 리뷰가 없습니다.
+                    </div>
+                )}
             </div>
-
-            {isAdmin && currentUser?.id !== profile.id && (
-                <AdminBanButton userId={profile.id} initialIsBanned={profile.is_banned} />
-            )}
         </div>
     )
 }
