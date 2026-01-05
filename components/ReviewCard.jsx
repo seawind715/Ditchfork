@@ -39,8 +39,10 @@ export default function ReviewCard({ review }) {
                     }}>
                         {review.album_name}
                     </h3>
-                    <div className="card-author" style={{ marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-                        {review.artist_name}
+                    <div className="card-author" style={{ marginBottom: '0.5rem', fontSize: '0.85rem', position: 'relative', zIndex: 10 }}>
+                        <Link href={`/artists/${encodeURIComponent(review.artist_name)}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
+                            {review.artist_name}
+                        </Link>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -62,11 +64,13 @@ export default function ReviewCard({ review }) {
                 </div>
             </Link>
 
-            <div style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.75rem', color: '#666', zIndex: 2 }}>
-                by <Link href={`/users/${review.user_id}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
-                    {review.profiles?.username || review.author_name}
-                </Link>
-            </div>
+            {(!review.review_count || review.review_count <= 1) && (
+                <div style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.75rem', color: '#666', zIndex: 2 }}>
+                    by <Link href={`/users/${review.user_id}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
+                        {review.profiles?.username || review.author_name}
+                    </Link>
+                </div>
+            )}
         </div>
     )
 }

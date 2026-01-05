@@ -34,59 +34,59 @@ export default function RatingDistribution({ reviews }) {
 
     return (
         <div style={{
-            background: '#111',
+            background: '#0a0a0a',
             padding: '1.5rem',
             borderRadius: '8px',
-            border: '1px solid #222',
+            border: '1px solid #1a1a1a',
             marginBottom: '3rem'
         }}>
-            <h3 style={{ fontSize: '0.9rem', color: '#888', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <h3 style={{ fontSize: '0.8rem', color: '#666', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
                 Rating Distribution
             </h3>
 
             <div style={{
                 display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'space-between',
-                height: '120px',
-                gap: '4px'
+                flexDirection: 'column-reverse', // 0 at bottom, 10 at top
+                gap: '6px'
             }}>
                 {bins.map((count, i) => {
-                    const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                    const width = maxCount > 0 ? (count / maxCount) * 100 : 0;
                     return (
                         <div key={i} style={{
-                            flex: 1,
                             display: 'flex',
-                            flexDirection: 'column',
                             alignItems: 'center',
-                            height: '100%'
+                            gap: '12px'
                         }}>
+                            <div style={{ fontSize: '0.75rem', color: '#444', fontWeight: 800, width: '15px', textAlign: 'right' }}>
+                                {i}
+                            </div>
                             <div style={{
                                 flex: 1,
-                                display: 'flex',
-                                alignItems: 'flex-end',
-                                width: '100%',
-                                marginBottom: '8px'
+                                height: '4px', // Slimmer bar
+                                background: '#1a1a1a',
+                                borderRadius: '2px',
+                                overflow: 'hidden'
                             }}>
                                 <div
-                                    title={`${i}-${i + 1}: ${count} reviews`}
                                     style={{
-                                        width: '100%',
-                                        height: `${height}%`,
+                                        width: `${width}%`,
+                                        height: '100%',
                                         background: colors[i],
-                                        opacity: count > 0 ? 1 : 0.1,
-                                        borderRadius: '2px 2px 0 0',
-                                        transition: 'height 0.3s ease'
+                                        opacity: count > 0 ? 1 : 0.05,
+                                        borderRadius: '2px',
+                                        transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
                                     }}
                                 />
                             </div>
-                            <div style={{ fontSize: '0.7rem', color: '#555', fontWeight: 700 }}>{i}</div>
+                            <div style={{ fontSize: '0.7rem', color: count > 0 ? '#888' : '#333', width: '30px', fontWeight: 600 }}>
+                                {count > 0 ? count : ''}
+                            </div>
                         </div>
                     );
                 })}
             </div>
 
-            <div style={{ marginTop: '1rem', textAlign: 'right', fontSize: '0.75rem', color: '#666' }}>
+            <div style={{ marginTop: '1.5rem', borderTop: '1px solid #1a1a1a', paddingTop: '1rem', textAlign: 'right', fontSize: '0.7rem', color: '#444', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Total {reviews.length} ratings
             </div>
         </div>

@@ -96,7 +96,9 @@ export default async function ReviewDetailPage({ params }) {
                                 {primaryReview.album_name}
                             </h1>
                             <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic' }}>
-                                by {primaryReview.artist_name} <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({primaryReview.release_year || 'Unknown'})</span>
+                                by <Link href={`/artists/${encodeURIComponent(primaryReview.artist_name)}`} style={{ color: 'inherit', textDecoration: 'none' }} className="hover-underline">
+                                    {primaryReview.artist_name}
+                                </Link> <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({primaryReview.release_year || 'Unknown'})</span>
                             </div>
 
                             {/* Aggregated Score Badge if multiple */}

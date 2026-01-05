@@ -322,18 +322,18 @@ export default function EditReviewPage({ params }) {
                             required
                             value={formData.rating}
                             onChange={handleInputChange}
-                            placeholder="8.5"
+                            placeholder="6.5"
                         />
                     </div>
                 </div>
 
                 <div>
-                    <label>세부 장르 (선택, 최대 5개)</label>
+                    <label>세부 장르 (영문 작성 권장, 최대 5개)</label>
                     <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
                         <input
                             value={currentSubGenre}
                             onChange={(e) => setCurrentSubGenre(e.target.value)}
-                            placeholder="예: Shoegaze, Dream Pop..."
+                            placeholder="예: Shoegaze, Dream Pop (영어로 입력)"
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                     e.preventDefault();
