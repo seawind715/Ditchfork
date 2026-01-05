@@ -16,38 +16,36 @@ export default function ScoreGuide() {
     ]
 
     return (
-        <section className="section" style={{ background: '#050505', borderTop: '1px solid #111', borderBottom: '1px solid #111', padding: '4rem 0' }}>
-            <div className="container">
-                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                    <span style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.9rem' }}>
+        <section className="section" style={{ background: '#050505', borderTop: '1px solid #111', borderBottom: '1px solid #111', padding: '3rem 0' }}>
+            <div className="container" style={{ maxWidth: '600px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <span style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.8rem' }}>
                         Ditchfork Scoring Guide
                     </span>
-                    <h2 style={{ marginTop: '0.5rem' }}>평가 기준 안내</h2>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', maxWidth: '800px', margin: '0 auto' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     {scores.map((s, idx) => (
                         <div key={s.val} style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '2rem',
-                            padding: '1rem 1.5rem',
+                            gap: '1.2rem',
+                            padding: '0.5rem 1.2rem',
                             background: idx === 0 ? 'rgba(255,0,0,0.05)' : 'rgba(255,255,255,0.02)',
                             border: `1px solid ${idx === 0 ? 'var(--primary)' : '#222'}`,
-                            borderRadius: '4px',
-                            transition: 'all 0.2s'
+                            borderRadius: '4px'
                         }}>
                             <div style={{
-                                fontSize: '1.8rem',
+                                fontSize: '1.2rem',
                                 fontWeight: 900,
                                 color: s.val >= 8 ? 'var(--primary)' : s.val >= 6 ? '#fff' : '#666',
-                                width: '40px',
+                                width: '30px',
                                 textAlign: 'center'
                             }}>
                                 {s.val}
                             </div>
                             <div style={{
-                                fontSize: '1rem',
+                                fontSize: '0.9rem',
                                 color: s.val >= 8 ? '#fff' : '#ccc',
                                 fontWeight: s.val >= 8 ? 700 : 400
                             }}>
