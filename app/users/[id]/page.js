@@ -52,6 +52,7 @@ export default async function PublicProfilePage({ params }) {
 
         reviews = reviewData || []
     } catch (e) {
+        if (e.digest === 'NEXT_NOT_FOUND' || e.digest?.startsWith('NEXT_REDIRECT')) throw e
         console.error("Profile fetch error:", e)
         return <div className="container section"><h1>정보를 가져오는 중 오류가 발생했습니다.</h1></div>
     }
@@ -107,7 +108,7 @@ export default async function PublicProfilePage({ params }) {
                 </h2>
 
                 {reviews && reviews.length > 0 ? (
-                    <div className="grid grid-3">
+                    <div className="grid grid-cols-4" style={{ gap: '1rem' }}>
                         {reviews.map(review => (
                             <ReviewCard key={review.id} review={review} />
                         ))}

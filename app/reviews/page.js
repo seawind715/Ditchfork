@@ -37,6 +37,7 @@ export default async function ReviewsPage({ searchParams }) {
         reviews = result.data
         error = result.error
     } catch (e) {
+        if (e.digest === 'NEXT_NOT_FOUND' || e.digest?.startsWith('NEXT_REDIRECT')) throw e
         error = e
     }
 

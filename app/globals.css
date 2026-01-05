@@ -206,6 +206,10 @@ a:hover {
   grid-template-columns: repeat(3, 1fr);
 }
 
+.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
 .card {
   background: var(--secondary);
   border: 1px solid var(--border);

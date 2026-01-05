@@ -136,7 +136,7 @@ export default async function ReviewDetailPage({ params }) {
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                 <div style={{ color: 'var(--primary)', fontSize: '2rem', fontWeight: 700 }}>
-                                    {review.rating.toFixed(1)}
+                                    {review.rating?.toFixed(1) || '0.0'}
                                 </div>
                                 <div style={{ width: '1px', height: '30px', background: '#444' }}></div>
                                 <div style={{ color: '#888' }}>
@@ -193,6 +193,7 @@ export default async function ReviewDetailPage({ params }) {
             </article>
         )
     } catch (e) {
+        if (e.digest === 'NEXT_NOT_FOUND' || e.digest?.startsWith('NEXT_REDIRECT')) throw e
         console.error("Review detail error:", e)
         return <div className="container section"><h1>정보를 가져오는 중 오류가 발생했습니다.</h1></div>
     }

@@ -56,6 +56,7 @@ export default async function FestivalsPage() {
             </div>
         )
     } catch (e) {
+        if (e.digest === 'NEXT_NOT_FOUND' || e.digest?.startsWith('NEXT_REDIRECT')) throw e
         console.error("Festivals page error:", e)
         return <div className="container section"><h1>정보를 가져오는 중 오류가 발생했습니다.</h1></div>
     }
