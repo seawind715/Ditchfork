@@ -1,5 +1,6 @@
 import Hero from '@/components/Hero'
 import Footer from '@/components/Footer'
+import ScoreGuide from '@/components/ScoreGuide'
 import ReviewCard from '@/components/ReviewCard'
 import { createClient } from '@/utils/supabase/server'
 
@@ -68,6 +69,7 @@ export default async function Home() {
   return (
     <main>
       <Hero initialData={heroData || defaultHero} user={user} />
+      <ScoreGuide />
 
       {!user && (
         <div style={{ background: '#111', color: '#888', textAlign: 'center', padding: '1rem', borderBottom: '1px solid #222' }}>
