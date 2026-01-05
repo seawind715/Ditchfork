@@ -83,7 +83,7 @@ export default async function Home() {
 
         <div className="grid grid-cols-3">
           {recentReviews && recentReviews.length > 0 ? (
-            recentReviews.map((review) => (
+            recentReviews.map((review: any) => (
               <ReviewCard key={review.id} review={review} />
             ))
           ) : (
