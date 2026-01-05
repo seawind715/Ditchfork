@@ -60,7 +60,7 @@ export default function Hero({ initialData, user }) {
         )
     }
 
-    const review = data.reviews
+    const review = data?.reviews
 
     return (
         <section className="section" style={{ background: '#0a0a0a', borderBottom: '1px solid #333', position: 'relative', overflow: 'hidden' }}>

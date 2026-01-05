@@ -17,8 +17,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const supabase = await createClient();
+    if (supabase) {
+      const { data } = await supabase.auth.getUser();
+      user = data?.user || null;
+    }
+  } catch (e) {
+    console.error("Layout auth check failed:", e);
+  }
 
   return (
     <html lang="en">

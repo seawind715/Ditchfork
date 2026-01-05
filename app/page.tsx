@@ -6,13 +6,8 @@ import { createClient } from '@/utils/supabase/server'
 export default async function Home() {
   const supabase = await createClient()
 
-  // Parallel data fetching to optimize performance and reduce wait time
-  const [
-    { data: heroData },
-    { data: footerData },
-    { data: recentReviews },
-    { data: { user } }
-  ] = await Promise.all([
+  // Parallel data fetching with defensive checks
+  const results = await Promise.all([
     supabase
       .from('hero_content')
       .select(`
@@ -23,12 +18,11 @@ export default async function Home() {
           )
       `)
       .eq('active', true)
-      .single(),
+      .maybeSingle(),
     supabase
       .from('site_footer')
       .select('*')
-      .eq('id', 1)
-      .single(),
+      .maybeSingle(),
     supabase
       .from('reviews')
       .select(`
@@ -39,6 +33,11 @@ export default async function Home() {
       .limit(6),
     supabase.auth.getUser()
   ])
+
+  const heroData = results[0]?.data
+  const footerData = results[1]?.data
+  const recentReviews = results[2]?.data
+  const user = results[3]?.data?.user || null
 
   const defaultHero = {
     id: 'default',
