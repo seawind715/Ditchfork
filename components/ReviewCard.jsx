@@ -43,9 +43,7 @@ export default function ReviewCard({ review }) {
                         {review.artist_name}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem' }}>
-                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary)' }}>
-                            {review.rating.toFixed(1)}
-                        </span>
+                        {review.rating?.toFixed(1) || '0.0'}
                     </div>
                 </div>
             </Link>

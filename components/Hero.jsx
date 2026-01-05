@@ -60,7 +60,7 @@ export default function Hero({ initialData, user }) {
         )
     }
 
-    const review = data?.reviews
+    const review = Array.isArray(data?.reviews) ? data.reviews[0] : data?.reviews
 
     return (
         <section className="section" style={{ background: '#0a0a0a', borderBottom: '1px solid #333', position: 'relative', overflow: 'hidden' }}>
@@ -101,7 +101,7 @@ export default function Hero({ initialData, user }) {
                                     Read Review →
                                 </Link>
                                 <div style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--primary)' }}>
-                                    Rating: {review.rating.toFixed(1)}
+                                    Rating: {review.rating?.toFixed(1) || '0.0'}
                                 </div>
                             </div>
                         </>

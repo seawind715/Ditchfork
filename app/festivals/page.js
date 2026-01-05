@@ -16,7 +16,8 @@ export default async function FestivalsPage() {
         const now = new Date().toISOString()
 
         // Get Auth User
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: authData } = await supabase.auth.getUser()
+        const user = authData?.user || null
 
         // Fetch UPCOMING festivals
         const { data: festivals, error } = await supabase

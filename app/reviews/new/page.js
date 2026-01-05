@@ -133,7 +133,8 @@ export default function NewReviewPage() {
         }
 
         // Get current user
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: authData } = await supabase.auth.getUser()
+        const user = authData?.user || null
 
         if (!user) {
             alert('로그인이 필요합니다.')

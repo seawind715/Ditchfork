@@ -108,7 +108,7 @@ export default async function PublicProfilePage({ params }) {
                 </h2>
 
                 {reviews && reviews.length > 0 ? (
-                    <div className="grid grid-cols-4" style={{ gap: '1rem' }}>
+                    <div className="grid grid-cols-4" style={{ gap: '2rem 1rem' }}>
                         {reviews.map(review => (
                             <ReviewCard key={review.id} review={review} />
                         ))}

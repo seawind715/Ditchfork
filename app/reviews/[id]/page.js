@@ -41,7 +41,8 @@ export default async function ReviewDetailPage({ params }) {
     }
 
     try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: authData } = await supabase.auth.getUser()
+        const user = authData?.user || null
 
         const { data: review, error } = await supabase
             .from('reviews')

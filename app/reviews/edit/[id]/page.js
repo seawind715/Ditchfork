@@ -37,7 +37,8 @@ export default function EditReviewPage({ params }) {
     useEffect(() => {
         const fetchData = async () => {
             // 1. Get user
-            const { data: { user } } = await supabase.auth.getUser()
+            const { data: authData } = await supabase.auth.getUser()
+            const user = authData?.user || null
             setUser(user)
 
             if (!user) {
