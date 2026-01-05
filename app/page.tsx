@@ -50,21 +50,6 @@ export default async function Home() {
     <main>
       <Hero initialData={heroData || defaultHero} user={user} />
 
-      {/* Reference Sites Section */}
-      <section style={{ borderBottom: '1px solid var(--border)', padding: '2rem 0', background: '#0a0a0a' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4rem' }}>
-          <span style={{ color: '#666', fontSize: '0.9rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>References</span>
-          <div style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}>
-            <a href="https://rateyourmusic.com" target="_blank" rel="noopener noreferrer" style={{ opacity: 0.7, transition: 'opacity 0.3s' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Rate_Your_Music_logo.svg" alt="RateYourMusic" style={{ height: '24px', filter: 'brightness(1.5)' }} />
-            </a>
-            <a href="https://albumoftheyear.org" target="_blank" rel="noopener noreferrer" style={{ opacity: 0.7, transition: 'opacity 0.3s' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Albumoftheyear2.png" alt="AlbumOfTheYear" style={{ height: '32px', filter: 'brightness(1.5)' }} />
-            </a>
-          </div>
-        </div>
-      </section>
-
       {!user && (
         <div style={{ background: '#111', color: '#888', textAlign: 'center', padding: '1rem', borderBottom: '1px solid #222' }}>
           로그인하면 리뷰와 댓글을 작성하고, 페스티벌 정보를 공유할 수 있습니다. <a href="/login" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>로그인하기</a>

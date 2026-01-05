@@ -28,7 +28,7 @@ export default async function ReviewsPage({ searchParams }) {
 
     const { data: reviews, error } = await query
 
-    const genres = ['Rock', 'Pop', 'Hip-Hop', 'Electronic', 'Jazz', 'K-Pop', 'Folk', 'Experimental', 'Uncategorized']
+    const genres = ['Rock', 'Pop', 'Hip-Hop', 'Electronic', 'Jazz', 'Classical Music', 'K-Pop', 'Folk', 'Experimental', 'Uncategorized']
 
     return (
         <div className="container section">
