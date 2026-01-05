@@ -49,7 +49,7 @@ export default function ReviewCard({ review }) {
             </Link>
 
             <div style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.75rem', color: '#666', zIndex: 2 }}>
-                by <Link href={`/users/${review.user_id}`} style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={(e) => e.target.style.textDecoration = 'underline'} onMouseOut={(e) => e.target.style.textDecoration = 'none'}>
+                by <Link href={`/users/${review.user_id}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
                     {review.profiles?.username || review.author_name}
                 </Link>
             </div>
