@@ -11,9 +11,6 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
     const adminEmail = 'id01035206992@gmail.com'
     const isAdmin = userEmail?.toLowerCase() === adminEmail.toLowerCase()
 
-    // Debug log to help identify why the button might be missing
-    // console.log('Admin check:', { userEmail, isAdmin })
-
     if (!isAdmin) return null
 
     const updateLinks = async () => {

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function ReviewCard({ review }) {
     // Parsing the genre to get the first one if multiple (though we use simple text for now)
@@ -8,13 +9,18 @@ export default function ReviewCard({ review }) {
 
     return (
         <Link href={`/reviews/${review.id}`} className="card" style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none' }}>
-            {/* Placeholder for cover image if not present */}
-            <div className="card-image" style={{
-                background: review.cover_image_url ? `url(${review.cover_image_url}) center/cover` : '#333',
-                position: 'relative'
-            }}>
-                {!review.cover_image_url && (
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
+            <div className="card-image" style={{ position: 'relative', overflow: 'hidden' }}>
+                {review.cover_image_url ? (
+                    <Image
+                        src={review.cover_image_url}
+                        alt={`${review.album_name} cover`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        style={{ objectFit: 'cover' }}
+                        className="transition-opacity duration-300"
+                    />
+                ) : (
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', background: '#333' }}>
                         No Cover
                     </div>
                 )}

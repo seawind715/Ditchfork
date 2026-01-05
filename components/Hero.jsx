@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -62,16 +63,18 @@ export default function Hero({ initialData, user }) {
     const review = data.reviews
 
     return (
-        <section className="section" style={{ background: '#0a0a0a', borderBottom: '1px solid #333', position: 'relative' }}>
+        <section className="section" style={{ background: '#0a0a0a', borderBottom: '1px solid #333', position: 'relative', overflow: 'hidden' }}>
             {/* Background Image Element (Optional Blur Effect) */}
             {review?.cover_image_url && (
-                <div style={{
-                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                    background: `url(${review.cover_image_url}) center/cover`,
-                    opacity: 0.15,
-                    filter: 'blur(20px)',
-                    zIndex: 0
-                }}></div>
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.15, filter: 'blur(40px)', zIndex: 0 }}>
+                    <Image
+                        src={review.cover_image_url}
+                        alt=""
+                        fill
+                        priority
+                        style={{ objectFit: 'cover' }}
+                    />
+                </div>
             )}
 
             <div className="container" style={{ display: 'flex', gap: '3rem', alignItems: 'center', minHeight: '400px', position: 'relative', zIndex: 1 }}>
@@ -132,12 +135,24 @@ export default function Hero({ initialData, user }) {
                     <div style={{
                         width: '100%',
                         height: '400px',
-                        background: review?.cover_image_url ? `url(${review.cover_image_url}) center/cover` : '#1a1a1a',
+                        position: 'relative',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         border: '1px solid #333',
-                        cursor: review ? 'pointer' : 'default'
+                        background: '#1a1a1a',
+                        cursor: review ? 'pointer' : 'default',
+                        overflow: 'hidden'
                     }}>
-                        {!review?.cover_image_url && <span style={{ color: '#444' }}>No Cover Image</span>}
+                        {review?.cover_image_url ? (
+                            <Image
+                                src={review.cover_image_url}
+                                alt={review.album_name}
+                                fill
+                                priority
+                                style={{ objectFit: 'cover' }}
+                            />
+                        ) : (
+                            <span style={{ color: '#444' }}>No Cover Image</span>
+                        )}
                     </div>
                 </Link>
             </div>

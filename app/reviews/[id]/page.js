@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import AdminDeleteButton from '@/components/AdminDeleteButton'
 import AdminFeatureButton from '@/components/AdminFeatureButton'
@@ -55,11 +56,23 @@ export default async function ReviewDetailPage({ params }) {
                         width: '300px',
                         height: '300px',
                         flexShrink: 0,
-                        background: review.cover_image_url ? `url(${review.cover_image_url}) center/cover` : '#333',
+                        position: 'relative',
                         border: '1px solid var(--border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        background: '#333',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        overflow: 'hidden'
                     }}>
-                        {!review.cover_image_url && <span style={{ color: '#666' }}>No Cover</span>}
+                        {review.cover_image_url ? (
+                            <Image
+                                src={review.cover_image_url}
+                                alt={`${review.album_name} cover`}
+                                fill
+                                priority
+                                style={{ objectFit: 'cover' }}
+                            />
+                        ) : (
+                            <span style={{ color: '#666' }}>No Cover</span>
+                        )}
                     </div>
                     <div>
                         <div style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
