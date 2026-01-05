@@ -92,17 +92,17 @@ export default function NewReviewPage() {
     }
 
     const fetchCover = async () => {
-        const artist = artists.join(', ') || currentArtistName
-        const album = albumName
+        const artistList = artists.length > 0 ? artists.join(', ') : currentArtistName.trim()
+        const album = albumName.trim()
 
-        if (!artist || !album) {
+        if (!artistList || !album) {
             alert('아티스트와 앨범명을 먼저 입력해주세요.')
             return
         }
 
         setIsFetchingCover(true)
         try {
-            const term = encodeURIComponent(`${artist} ${album}`)
+            const term = encodeURIComponent(`${artistList} ${album}`)
 
             // Try US store first then KR store
             const stores = ['US', 'KR']
@@ -114,13 +114,13 @@ export default function NewReviewPage() {
 
                 if (data.results && data.results.length > 0) {
                     const ranked = data.results.map(res => {
-                        const aMatch = res.artistName?.toLowerCase().includes(artist.toLowerCase()) || artist.toLowerCase().includes(res.artistName?.toLowerCase())
+                        const aMatch = res.artistName?.toLowerCase().includes(artistList.toLowerCase()) || artistList.toLowerCase().includes(res.artistName?.toLowerCase())
                         const cMatch = res.collectionName?.toLowerCase().includes(album.toLowerCase()) || album.toLowerCase().includes(res.collectionName?.toLowerCase())
 
                         let score = 0
                         if (aMatch) score += 2
                         if (cMatch) score += 3
-                        if (res.artistName?.toLowerCase() === artist.toLowerCase()) score += 3
+                        if (res.artistName?.toLowerCase() === artistList.toLowerCase()) score += 3
                         if (res.collectionName?.toLowerCase() === album.toLowerCase()) score += 7
 
                         return { ...res, score }
@@ -323,7 +323,7 @@ export default function NewReviewPage() {
                         />
                     </div>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>커버 이미지 URL *</label>
+                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>커버 이미지 URL</label>
                         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.4rem' }}>
                             <input
                                 name="cover_image_url"
@@ -331,7 +331,6 @@ export default function NewReviewPage() {
                                 onChange={(e) => setCoverImageUrl(e.target.value)}
                                 placeholder="이미지 찾기 버튼을 눌러주세요"
                                 style={{ width: '100%', marginBottom: 0 }}
-                                required
                             />
                             <button
                                 type="button"
