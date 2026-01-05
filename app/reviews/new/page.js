@@ -114,13 +114,21 @@ export default function NewReviewPage() {
 
                 if (data.results && data.results.length > 0) {
                     const ranked = data.results.map(res => {
-                        const aMatch = res.artistName?.toLowerCase().includes(artistList.toLowerCase()) || artistList.toLowerCase().includes(res.artistName?.toLowerCase())
+                        // Split artistList to handle multi-artist searches
+                        const artistNames = artistList.split(',').map(a => a.trim().toLowerCase())
+                        const itunesArtist = res.artistName?.toLowerCase() || ''
+
+                        // Check if any of our artists match the iTunes artist
+                        const aMatch = artistNames.some(name =>
+                            itunesArtist.includes(name) || name.includes(itunesArtist)
+                        )
                         const cMatch = res.collectionName?.toLowerCase().includes(album.toLowerCase()) || album.toLowerCase().includes(res.collectionName?.toLowerCase())
 
                         let score = 0
                         if (aMatch) score += 2
                         if (cMatch) score += 3
-                        if (res.artistName?.toLowerCase() === artistList.toLowerCase()) score += 3
+                        // Exact match bonus
+                        if (artistNames.some(name => name === itunesArtist)) score += 3
                         if (res.collectionName?.toLowerCase() === album.toLowerCase()) score += 7
 
                         return { ...res, score }
