@@ -104,25 +104,27 @@ export default async function PublicProfilePage({ params }) {
             </div>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '4rem' }}>
-            </h2>
+                <h2 style={{ fontSize: '2rem', marginBottom: '2rem', textAlign: 'center', fontWeight: 800 }}>
+                    <span style={{ color: 'var(--primary)' }}>{profile.username}</span>님의 리뷰 ({reviews?.length || 0})
+                </h2>
 
-            {isAdmin && currentUser?.email?.toLowerCase().trim() === 'id01035206992@gmail.com' && (
-                <AdminWipeButton userEmail={currentUser.email} />
-            )}
+                {isAdmin && currentUser?.email?.toLowerCase().trim() === 'id01035206992@gmail.com' && (
+                    <AdminWipeButton userEmail={currentUser.email} />
+                )}
 
-            {reviews && reviews.length > 0 ? (
-                <div className="grid grid-cols-4" style={{ gap: '2rem 1rem' }}>
-                    {reviews.map(review => (
-                        <ReviewCard key={review.id} review={review} />
-                    ))}
-                </div>
-            ) : (
-                <div style={{ textAlign: 'center', color: '#666', padding: '6rem 0', background: '#0a0a0a', border: '1px dashed #333', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💿</div>
-                    아직 작성한 리뷰가 없습니다.
-                </div>
-            )}
+                {reviews && reviews.length > 0 ? (
+                    <div className="grid grid-cols-4" style={{ gap: '2rem 1rem' }}>
+                        {reviews.map(review => (
+                            <ReviewCard key={review.id} review={review} />
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ textAlign: 'center', color: '#666', padding: '6rem 0', background: '#0a0a0a', border: '1px dashed #333', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💿</div>
+                        아직 작성한 리뷰가 없습니다.
+                    </div>
+                )}
+            </div>
         </div>
-        </div >
     )
 }
