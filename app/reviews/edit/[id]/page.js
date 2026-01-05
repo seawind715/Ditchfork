@@ -21,6 +21,8 @@ export default function EditReviewPage({ params }) {
         content: '',
         cover_image_url: ''
     })
+    const [artists, setArtists] = useState([])
+    const [currentArtistName, setCurrentArtistName] = useState('')
     const [subGenres, setSubGenres] = useState([])
     const [currentSubGenre, setCurrentSubGenre] = useState('')
     const [coverImageUrl, setCoverImageUrl] = useState('')
@@ -80,6 +82,7 @@ export default function EditReviewPage({ params }) {
                 content: review.content || '',
                 cover_image_url: review.cover_image_url || ''
             })
+            setArtists(review.artist_name ? review.artist_name.split(',').map(s => s.trim()) : [])
             setSubGenres(review.sub_genres || [])
             setCoverImageUrl(review.cover_image_url || '')
             setStreamingLinks({
@@ -111,12 +114,26 @@ export default function EditReviewPage({ params }) {
         }
     }
 
+    const handleAddArtist = (e) => {
+        if (e) e.preventDefault()
+        const tag = currentArtistName.trim()
+        if (tag && !artists.includes(tag)) {
+            setArtists([...artists, tag])
+            setCurrentArtistName('')
+        }
+    }
+
+    const handleRemoveArtist = (tag) => {
+        setArtists(artists.filter(a => a !== tag))
+    }
+
     const handleRemoveSubGenre = (tag) => {
         setSubGenres(subGenres.filter(g => g !== tag))
     }
 
     const fetchCover = async () => {
-        const { artist_name: artist, album_name: album } = formData
+        const artist = artists.join(', ') || currentArtistName
+        const album = formData.album_name
 
         if (!artist || !album) {
             alert('아티스트와 앨범명을 먼저 입력해주세요.')
@@ -193,8 +210,11 @@ export default function EditReviewPage({ params }) {
         e.preventDefault()
         setSaving(true)
 
+        const artistList = artists.length > 0 ? artists : (currentArtistName.trim() ? [currentArtistName.trim()] : [])
+        const artistNameStr = artistList.join(', ')
+
         const { toTitleCase } = await import('@/utils/format')
-        const normalizedArtist = toTitleCase(formData.artist_name)
+        const normalizedArtist = toTitleCase(artistNameStr)
         const normalizedAlbum = toTitleCase(formData.album_name)
 
         const updatedReview = {
@@ -233,14 +253,40 @@ export default function EditReviewPage({ params }) {
 
                 <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
                     <div>
-                        <label>아티스트 *</label>
-                        <input
-                            name="artist_name"
-                            required
-                            value={formData.artist_name}
-                            onChange={handleInputChange}
-                            placeholder="예: NewJeans"
-                        />
+                        <label>아티스트 (여러 명 가능) *</label>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                            <input
+                                placeholder="예: NewJeans"
+                                value={currentArtistName}
+                                onChange={(e) => setCurrentArtistName(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault()
+                                        handleAddArtist()
+                                    }
+                                }}
+                                style={{ marginBottom: 0 }}
+                            />
+                            <button type="button" onClick={handleAddArtist} className="btn btn-outline" style={{ width: 'auto', padding: '0 1rem' }}>추가</button>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', minHeight: '30px', marginBottom: '0.5rem' }}>
+                            {artists.map(tag => (
+                                <span key={tag} style={{
+                                    background: 'var(--brand)',
+                                    color: 'white',
+                                    padding: '0.2rem 0.6rem',
+                                    fontSize: '0.8rem',
+                                    borderRadius: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.4rem',
+                                    fontWeight: 700
+                                }}>
+                                    {tag}
+                                    <button type="button" onClick={() => handleRemoveArtist(tag)} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1rem' }}>&times;</button>
+                                </span>
+                            ))}
+                        </div>
                     </div>
                     <div>
                         <label>앨범명 *</label>

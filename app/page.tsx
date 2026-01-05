@@ -63,14 +63,14 @@ export default async function Home() {
 
   // Aggregation
   const groupedReviews = groupReviews(allRawReviews)
-  const newReviews = groupedReviews.slice(0, 4) // Top 4 grouped
+  const newReviews = groupedReviews.slice(0, 10) // Top 10 grouped
 
   // New Release (current year - 3)
   const currentYear = new Date().getFullYear()
   const releaseLimit = currentYear - 3
   const newReleases = groupedReviews
     .filter(r => parseInt(r.release_year) >= releaseLimit)
-    .slice(0, 4)
+    .slice(0, 10)
 
   const defaultHero = {
     id: 'default',
@@ -96,13 +96,15 @@ export default async function Home() {
           <a href="/reviews" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
         </div>
 
-        <div className="grid grid-cols-4">
+        <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
           {newReviews.length > 0 ? (
             newReviews.map((review: any) => (
-              <ReviewCard key={review.id} review={review} />
+              <div key={review.id} style={{ minWidth: '280px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+                <ReviewCard review={review} />
+              </div>
             ))
           ) : (
-            <div style={{ gridColumn: 'span 4', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+            <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
               <p style={{ color: '#666' }}>최근 등록된 리뷰가 없습니다.</p>
             </div>
           )}
@@ -116,13 +118,15 @@ export default async function Home() {
           <span style={{ fontSize: '0.9rem', color: '#666' }}>{releaseLimit}~{currentYear} 발매 앨범</span>
         </div>
 
-        <div className="grid grid-cols-4">
+        <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
           {newReleases.length > 0 ? (
             newReleases.map((review: any) => (
-              <ReviewCard key={review.id} review={review} />
+              <div key={review.id} style={{ minWidth: '280px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+                <ReviewCard review={review} />
+              </div>
             ))
           ) : (
-            <div style={{ gridColumn: 'span 4', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+            <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
               <p style={{ color: '#666' }}>최근 3년 내 발매된 앨범에 대한 리뷰가 없습니다.</p>
             </div>
           )}

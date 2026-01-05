@@ -90,8 +90,15 @@ export default function Hero({ initialData, user }) {
                                     {review.album_name}
                                 </h1>
                             </Link>
-                            <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic', color: '#ccc' }}>
-                                by {review.artist_name}
+                            <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic', color: '#ccc', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                by {review.artist_name?.split(',').map((name, i, arr) => (
+                                    <span key={name.trim()}>
+                                        <Link href={`/artists/${encodeURIComponent(name.trim())}`} style={{ color: 'inherit', textDecoration: 'none' }} className="hover-underline">
+                                            {name.trim()}
+                                        </Link>
+                                        {i < arr.length - 1 && <span style={{ marginLeft: '0.1rem', opacity: 0.5 }}>,</span>}
+                                    </span>
+                                ))}
                             </div>
                             <p style={{ fontSize: '1.1rem', color: '#999', marginBottom: '1.5rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                                 {review.content}

@@ -95,10 +95,15 @@ export default async function ReviewDetailPage({ params }) {
                             <h1 style={{ fontSize: '3.5rem', lineHeight: 1.1, marginBottom: '0.5rem' }}>
                                 {primaryReview.album_name}
                             </h1>
-                            <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic' }}>
-                                by <Link href={`/artists/${encodeURIComponent(primaryReview.artist_name)}`} style={{ color: 'inherit', textDecoration: 'none' }} className="hover-underline">
-                                    {primaryReview.artist_name}
-                                </Link> <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({primaryReview.release_year || 'Unknown'})</span>
+                            <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                by {primaryReview.artist_name?.split(',').map((name, i, arr) => (
+                                    <span key={name.trim()}>
+                                        <Link href={`/artists/${encodeURIComponent(name.trim())}`} style={{ color: 'inherit', textDecoration: 'none' }} className="hover-underline">
+                                            {name.trim()}
+                                        </Link>
+                                        {i < arr.length - 1 && <span style={{ marginLeft: '0.1rem', opacity: 0.5, fontStyle: 'normal' }}>,</span>}
+                                    </span>
+                                ))} <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({primaryReview.release_year || 'Unknown'})</span>
                             </div>
 
                             {/* Aggregated Score Badge if multiple */}

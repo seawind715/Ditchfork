@@ -38,11 +38,25 @@ export default function NewReviewPage() {
         setSubGenres(subGenres.filter(g => g !== tag))
     }
 
-    const [artistName, setArtistName] = useState('')
+    const [artists, setArtists] = useState([])
+    const [currentArtistName, setCurrentArtistName] = useState('')
     const [albumName, setAlbumName] = useState('')
     const [genre, setGenre] = useState('')
     const [year, setYear] = useState('')
     const [isAutoFilling, setIsAutoFilling] = useState(false)
+
+    const handleAddArtist = (e) => {
+        if (e) e.preventDefault()
+        const tag = currentArtistName.trim()
+        if (tag && !artists.includes(tag)) {
+            setArtists([...artists, tag])
+            setCurrentArtistName('')
+        }
+    }
+
+    const handleRemoveArtist = (tag) => {
+        setArtists(artists.filter(a => a !== tag))
+    }
 
     const fetchExistingAlbumData = async (artist, album) => {
         if (!artist || !album) return
@@ -78,7 +92,7 @@ export default function NewReviewPage() {
     }
 
     const fetchCover = async () => {
-        const artist = artistName
+        const artist = artists.join(', ') || currentArtistName
         const album = albumName
 
         if (!artist || !album) {
@@ -157,9 +171,12 @@ export default function NewReviewPage() {
         setLoading(true)
 
         const formData = new FormData(e.target)
+        const artistList = artists.length > 0 ? artists : (currentArtistName.trim() ? [currentArtistName.trim()] : [])
+        const artistNameStr = artistList.join(', ')
+
         const review = {
             album_name: formData.get('album_name'),
-            artist_name: formData.get('artist_name'),
+            artist_name: artistNameStr,
             release_year: formData.get('release_year'),
             genre: formData.get('genre'),
             sub_genres: subGenres, // Include the array
@@ -206,6 +223,8 @@ export default function NewReviewPage() {
         const { toTitleCase } = await import('@/utils/format')
         const normalizedArtist = toTitleCase(review.artist_name)
         const normalizedAlbum = toTitleCase(review.album_name)
+        const normalizedGenre = toTitleCase(review.genre)
+        const normalizedSubGenres = subGenres.map(g => toTitleCase(g))
 
         const { error } = await supabase
             .from('reviews')
@@ -213,6 +232,8 @@ export default function NewReviewPage() {
                 ...review,
                 artist_name: normalizedArtist,
                 album_name: normalizedAlbum,
+                genre: normalizedGenre,
+                sub_genres: normalizedSubGenres,
                 user_id: user.id
             })
 
@@ -233,15 +254,48 @@ export default function NewReviewPage() {
 
                 <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
                     <div>
-                        <label>아티스트 *</label>
-                        <input
-                            name="artist_name"
-                            required
-                            placeholder="예: NewJeans"
-                            value={artistName}
-                            onChange={(e) => setArtistName(e.target.value)}
-                            onBlur={() => fetchExistingAlbumData(artistName, albumName)}
-                        />
+                        <label>아티스트 (여러 명 가능) *</label>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                            <input
+                                placeholder="예: NewJeans"
+                                value={currentArtistName}
+                                onChange={(e) => setCurrentArtistName(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault()
+                                        handleAddArtist()
+                                        fetchExistingAlbumData([...artists, currentArtistName.trim()].join(', '), albumName)
+                                    }
+                                }}
+                                style={{ marginBottom: 0 }}
+                            />
+                            <button type="button" onClick={() => {
+                                handleAddArtist()
+                                fetchExistingAlbumData([...artists, currentArtistName.trim()].join(', '), albumName)
+                            }} className="btn btn-outline" style={{ width: 'auto', padding: '0 1rem' }}>추가</button>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', minHeight: '30px', marginBottom: '0.5rem' }}>
+                            {artists.map(tag => (
+                                <span key={tag} style={{
+                                    background: 'var(--brand)',
+                                    color: 'white',
+                                    padding: '0.2rem 0.6rem',
+                                    fontSize: '0.8rem',
+                                    borderRadius: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.4rem',
+                                    fontWeight: 700
+                                }}>
+                                    {tag}
+                                    <button type="button" onClick={() => {
+                                        const newArtists = artists.filter(a => a !== tag)
+                                        handleRemoveArtist(tag)
+                                        fetchExistingAlbumData(newArtists.join(', '), albumName)
+                                    }} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1rem' }}>&times;</button>
+                                </span>
+                            ))}
+                        </div>
                     </div>
                     <div>
                         <label>앨범명 *</label>
@@ -251,7 +305,7 @@ export default function NewReviewPage() {
                             placeholder="예: Get Up"
                             value={albumName}
                             onChange={(e) => setAlbumName(e.target.value)}
-                            onBlur={() => fetchExistingAlbumData(artistName, albumName)}
+                            onBlur={() => fetchExistingAlbumData(artists.join(', '), albumName)}
                         />
                     </div>
                 </div>

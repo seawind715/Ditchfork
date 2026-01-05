@@ -31,7 +31,7 @@ export default async function ArtistPage({ params }) {
                     avatar_url
                 )
             `)
-            .ilike('artist_name', artistNameRaw)
+            .ilike('artist_name', `%${artistNameRaw}%`)
             .order('created_at', { ascending: false })
 
         if (error) throw error

@@ -28,7 +28,14 @@ export default function ReviewCard({ review }) {
                 </div>
 
                 <div className="card-content" style={{ flex: 1 }}>
-                    <span className="card-meta">{genre}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginBottom: '0.8rem' }}>
+                        <span className="card-meta" style={{ marginBottom: 0 }}>{genre}</span>
+                        {review.sub_genres && review.sub_genres.length > 0 && (
+                            <span style={{ fontSize: '0.7rem', color: '#888', fontStyle: 'italic' }}>
+                                {review.sub_genres.join(', ')}
+                            </span>
+                        )}
+                    </div>
                     <h3 className="card-title" style={{
                         fontSize: '1.1rem',
                         marginBottom: '0.4rem',
@@ -38,11 +45,21 @@ export default function ReviewCard({ review }) {
                         overflow: 'hidden'
                     }}>
                         {review.album_name}
+                        {review.release_year && (
+                            <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 400, marginLeft: '0.5rem' }}>
+                                ({review.release_year})
+                            </span>
+                        )}
                     </h3>
-                    <div className="card-author" style={{ marginBottom: '0.5rem', fontSize: '0.85rem', position: 'relative', zIndex: 10 }}>
-                        <Link href={`/artists/${encodeURIComponent(review.artist_name)}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
-                            {review.artist_name}
-                        </Link>
+                    <div className="card-author" style={{ marginBottom: '0.5rem', fontSize: '0.85rem', position: 'relative', zIndex: 10, display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                        {review.artist_name?.split(',').map((name, i, arr) => (
+                            <span key={name.trim()}>
+                                <Link href={`/artists/${encodeURIComponent(name.trim())}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                    {name.trim()}
+                                </Link>
+                                {i < arr.length - 1 && <span style={{ marginLeft: '0.1rem', opacity: 0.5 }}>,</span>}
+                            </span>
+                        ))}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
