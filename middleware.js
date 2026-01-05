@@ -39,14 +39,15 @@ export async function middleware(request) {
             }
         )
 
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: authData } = await supabase.auth.getUser()
+        const user = authData?.user
 
         if (user) {
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('is_banned')
                 .eq('id', user.id)
-                .single()
+                .maybeSingle()
 
             if (profile?.is_banned && !request.nextUrl.pathname.startsWith('/banned')) {
                 return NextResponse.redirect(new URL('/banned', request.url))

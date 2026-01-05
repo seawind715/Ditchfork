@@ -6,33 +6,53 @@ import { createClient } from '@/utils/supabase/server'
 export default async function Home() {
   const supabase = await createClient()
 
-  // Parallel data fetching with defensive checks
-  const results = await Promise.all([
-    supabase
-      .from('hero_content')
-      .select(`
+  if (!supabase) {
+    return (
+      <main className="container section">
+        <h1>환경 설정 오류</h1>
+        <p>Supabase 환경 변수가 설정되지 않았습니다. Vercel 설정을 확인해주세요.</p>
+      </main>
+    )
+  }
+
+  let results: any[] = []
+  try {
+    // Parallel data fetching with defensive checks
+    results = await Promise.all([
+      supabase
+        .from('hero_content')
+        .select(`
+            *,
+            reviews (
+                *,
+                profiles (username)
+            )
+        `)
+        .eq('active', true)
+        .maybeSingle(),
+      supabase
+        .from('site_footer')
+        .select('*')
+        .maybeSingle(),
+      supabase
+        .from('reviews')
+        .select(`
           *,
-          reviews (
-              *,
-              profiles (username)
-          )
-      `)
-      .eq('active', true)
-      .maybeSingle(),
-    supabase
-      .from('site_footer')
-      .select('*')
-      .maybeSingle(),
-    supabase
-      .from('reviews')
-      .select(`
-        *,
-        profiles (username)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(6),
-    supabase.auth.getUser()
-  ])
+          profiles (username)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(6),
+      supabase.auth.getUser()
+    ])
+  } catch (err) {
+    console.error("Data fetching error:", err)
+    return (
+      <main className="container section">
+        <h1>데이터 가져오기 오류</h1>
+        <p>서버에서 데이터를 가져오는 중 오류가 발생했습니다.</p>
+      </main>
+    )
+  }
 
   const heroData = results[0]?.data
   const footerData = results[1]?.data

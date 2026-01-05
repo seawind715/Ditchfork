@@ -9,33 +9,52 @@ export default async function PublicProfilePage({ params }) {
     const { id } = await params
     const supabase = await createClient()
 
-    // 1. Get current logged in user (to check admin status)
-    const { data: { user: currentUser } } = await supabase.auth.getUser()
-    const adminEmail = 'id01035206992@gmail.com'
-    const isAdmin = currentUser?.email?.toLowerCase() === adminEmail.toLowerCase()
-
-    // 2. Fetch Public Profile
-    const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-    if (error || !profile) {
-        notFound()
+    if (!supabase) {
+        return <div className="container section"><h1>데이터베이스 연결 오류</h1></div>
     }
 
-    // 3. Fetch User's Reviews
-    const { data: reviews } = await supabase
-        .from('reviews')
-        .select(`
-            *,
-            profiles (
-                username
-            )
-        `)
-        .eq('user_id', id)
-        .order('created_at', { ascending: false })
+    let profile = null
+    let reviews = []
+    let isAdmin = false
+    let currentUser = null
+
+    try {
+        // 1. Get current logged in user (to check admin status)
+        const { data: authData } = await supabase.auth.getUser()
+        currentUser = authData?.user
+        const adminEmail = 'id01035206992@gmail.com'
+        isAdmin = currentUser?.email?.toLowerCase() === adminEmail.toLowerCase()
+
+        // 2. Fetch Public Profile
+        const { data, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle()
+
+        profile = data
+
+        if (!profile) {
+            notFound()
+        }
+
+        // 3. Fetch User's Reviews
+        const { data: reviewData } = await supabase
+            .from('reviews')
+            .select(`
+                *,
+                profiles (
+                    username
+                )
+            `)
+            .eq('user_id', id)
+            .order('created_at', { ascending: false })
+
+        reviews = reviewData || []
+    } catch (e) {
+        console.error("Profile fetch error:", e)
+        return <div className="container section"><h1>정보를 가져오는 중 오류가 발생했습니다.</h1></div>
+    }
 
     return (
         <div className="container section" style={{ maxWidth: '1000px' }}>

@@ -8,6 +8,10 @@ export default async function ReviewsPage({ searchParams }) {
     const supabase = await createClient()
     const { genre, q: search } = await searchParams
 
+    if (!supabase) {
+        return <div className="container section"><h1>데이터베이스 연결 오류</h1></div>
+    }
+
     let query = supabase
         .from('reviews')
         .select(`
@@ -26,7 +30,15 @@ export default async function ReviewsPage({ searchParams }) {
         query = query.or(`album_name.ilike.%${search}%,artist_name.ilike.%${search}%`)
     }
 
-    const { data: reviews, error } = await query
+    let reviews = []
+    let error = null
+    try {
+        const result = await query
+        reviews = result.data
+        error = result.error
+    } catch (e) {
+        error = e
+    }
 
     const genres = ['Rock', 'Pop', 'Hip-Hop', 'Electronic', 'Jazz', 'Classical Music', 'K-Pop', 'Folk', 'Experimental', 'Uncategorized']
 
