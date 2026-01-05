@@ -10,7 +10,8 @@ export default function AdminDeleteButton({ table, id, redirectTo, userEmail }) 
     const supabase = createClient()
 
     // Hide completely if not admin
-    if (userEmail !== 'id01035206992@gmail.com') {
+    const isAdmin = userEmail?.toLowerCase().trim() === 'id01035206992@gmail.com'
+    if (!isAdmin) {
         return null
     }
 

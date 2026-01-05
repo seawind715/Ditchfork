@@ -114,7 +114,7 @@ export default function Hero({ initialData, user }) {
                         </>
                     )}
 
-                    {user?.email === 'id01035206992@gmail.com' && !review && (
+                    {user?.email?.toLowerCase().trim() === 'id01035206992@gmail.com' && !review && (
                         <button
                             onClick={() => setIsEditing(true)}
                             style={{

@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import AdminBanButton from '@/components/AdminBanButton'
+import AdminWipeButton from '@/components/AdminWipeButton'
 import ReviewCard from '@/components/ReviewCard'
 
 export const revalidate = 0

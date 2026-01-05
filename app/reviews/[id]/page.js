@@ -141,7 +141,7 @@ export default async function ReviewDetailPage({ params }) {
                                 </div>
                                 <div style={{ width: '1px', height: '30px', background: '#444' }}></div>
                                 <div style={{ color: '#888' }}>
-                                    Reviewed by <Link href={`/users/${review.user_id}`} style={{ color: 'var(--foreground)', textDecoration: 'none', borderBottom: '1px solid transparent', transition: 'border-color 0.2s' }} onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'} onMouseOut={(e) => e.target.style.borderColor = 'transparent'}>
+                                    Reviewed by <Link href={`/users/${review.user_id}`} className="hover-underline" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>
                                         <strong style={{ color: 'inherit' }}>{review.profiles?.username || 'Unknown User'}</strong>
                                     </Link>
                                 </div>
@@ -166,7 +166,7 @@ export default async function ReviewDetailPage({ params }) {
                             ← 목록으로 돌아가기
                         </Link>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            {(user?.id === review.user_id || user?.email === 'id01035206992@gmail.com') && (
+                            {(user?.id === review.user_id || user?.email?.toLowerCase().trim() === 'id01035206992@gmail.com') && (
                                 <Link
                                     href={`/reviews/edit/${id}`}
                                     className="btn btn-outline"
