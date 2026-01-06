@@ -91,7 +91,7 @@ export default async function Home() {
   return (
     <main>
       <Hero initialData={heroData || defaultHero} user={user} />
-      <NoticeSection notices={notices} />
+      <NoticeSection notices={notices} user={user} />
       <ScoreGuide />
 
       {!user && (
