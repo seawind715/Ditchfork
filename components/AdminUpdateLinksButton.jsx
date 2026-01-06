@@ -58,12 +58,21 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
             // Album name match (score 3) is more reliable than artist name in these cases
             if (bestResult && bestResult.score >= 3) {
                 const appleUrl = bestResult.collectionViewUrl
+                let spotifyUrl = ''
+                let youtubeUrl = ''
 
-                const odesliResponse = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(appleUrl)}`)
-                const odesliData = await odesliResponse.json()
+                // Try to fetch key links from Odesli, but don't fail the whole process if it fails
+                try {
+                    const odesliResponse = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(appleUrl)}`)
+                    if (!odesliResponse.ok) throw new Error(`Odesli API status: ${odesliResponse.status}`)
+                    const odesliData = await odesliResponse.json()
 
-                const spotifyUrl = odesliData.linksByPlatform?.spotify?.url || ''
-                const youtubeUrl = odesliData.linksByPlatform?.youtubeMusic?.url || odesliData.linksByPlatform?.youtube?.url || ''
+                    spotifyUrl = odesliData.linksByPlatform?.spotify?.url || ''
+                    youtubeUrl = odesliData.linksByPlatform?.youtubeMusic?.url || odesliData.linksByPlatform?.youtube?.url || ''
+                } catch (odesliError) {
+                    console.warn('Odesli fetch failed, proceeding with Apple Music only:', odesliError)
+                    // Continue without Spotify/YouTube links
+                }
 
                 const highResUrl = bestResult.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
 
@@ -79,14 +88,15 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
                     .eq('id', review.id)
 
                 if (error) throw error
-                alert('스트리밍 링크가 성공적으로 업데이트되었습니다!')
+
+                alert(`링크 동기화 완료!${!spotifyUrl ? ' (Spotify/YouTube 링크는 가져오지 못했습니다)' : ''}`)
                 router.refresh()
             } else {
                 alert('앨범을 찾을 수 없습니다.')
             }
         } catch (error) {
             console.error('Update links error:', error)
-            alert('업데이트 중 오류가 발생했습니다: ' + error.message)
+            alert('업데이트 중 오류가 발생했습니다: ' + (error.message || 'Unknown error'))
         } finally {
             setLoading(false)
         }

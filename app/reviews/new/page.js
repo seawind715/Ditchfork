@@ -40,6 +40,8 @@ export default function NewReviewPage() {
 
     const [artists, setArtists] = useState([])
     const [currentArtistName, setCurrentArtistName] = useState('')
+    const [suggestions, setSuggestions] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
     const [albumName, setAlbumName] = useState('')
     const [genre, setGenre] = useState('')
     const [year, setYear] = useState('')
@@ -56,6 +58,42 @@ export default function NewReviewPage() {
 
     const handleRemoveArtist = (tag) => {
         setArtists(artists.filter(a => a !== tag))
+    }
+
+    const fetchArtistSuggestions = async (query) => {
+        if (!query || query.length < 1) {
+            setSuggestions([])
+            return
+        }
+
+        const { data } = await supabase
+            .from('reviews')
+            .select('artist_name')
+            .ilike('artist_name', `%${query}%`)
+            .order('created_at', { ascending: false })
+            .limit(50)
+
+        if (data) {
+            // Extract individual artist names, filter by query, and deduplicate
+            const all = data.flatMap(row => row.artist_name.split(',').map(s => s.trim()))
+            const matched = all.filter(name => name.toLowerCase().includes(query.toLowerCase()))
+            const unique = [...new Set(matched)]
+
+            // Prioritize exact match or starts-with
+            unique.sort((a, b) => {
+                const aLower = a.toLowerCase()
+                const bLower = b.toLowerCase()
+                const qLower = query.toLowerCase()
+                if (aLower === qLower) return -1
+                if (bLower === qLower) return 1
+                if (aLower.startsWith(qLower) && !bLower.startsWith(qLower)) return -1
+                if (!aLower.startsWith(qLower) && bLower.startsWith(qLower)) return 1
+                return 0
+            })
+
+            setSuggestions(unique.slice(0, 5))
+            setShowSuggestions(true)
+        }
     }
 
     const fetchExistingAlbumData = async (artist, album) => {
@@ -366,19 +404,74 @@ export default function NewReviewPage() {
                     <div>
                         <label>아티스트 (여러 명 가능) *</label>
                         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                            <input
-                                placeholder="예: NewJeans"
-                                value={currentArtistName}
-                                onChange={(e) => setCurrentArtistName(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault()
-                                        handleAddArtist()
-                                        fetchExistingAlbumData([...artists, currentArtistName.trim()].join(', '), albumName)
-                                    }
-                                }}
-                                style={{ marginBottom: 0 }}
-                            />
+                            <div style={{ position: 'relative', flex: 1 }}>
+                                <input
+                                    placeholder="예: NewJeans"
+                                    value={currentArtistName}
+                                    onChange={(e) => {
+                                        const val = e.target.value
+                                        setCurrentArtistName(val)
+                                        fetchArtistSuggestions(val)
+                                    }}
+                                    onFocus={() => {
+                                        if (currentArtistName) fetchArtistSuggestions(currentArtistName)
+                                    }}
+                                    onBlur={() => {
+                                        // Delay hiding to allow click event on suggestion
+                                        setTimeout(() => setShowSuggestions(false), 200)
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault()
+                                            handleAddArtist()
+                                            fetchExistingAlbumData([...artists, currentArtistName.trim()].join(', '), albumName)
+                                            setSuggestions([])
+                                        }
+                                    }}
+                                    style={{ marginBottom: 0, width: '100%' }}
+                                    autoComplete="off"
+                                />
+                                {showSuggestions && suggestions.length > 0 && (
+                                    <ul style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#222',
+                                        border: '1px solid #444',
+                                        borderRadius: '4px',
+                                        marginTop: '4px',
+                                        listStyle: 'none',
+                                        padding: 0,
+                                        zIndex: 1000,
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                                    }}>
+                                        {suggestions.map((suggestion, idx) => (
+                                            <li
+                                                key={idx}
+                                                onClick={() => {
+                                                    setCurrentArtistName(suggestion)
+                                                    setSuggestions([])
+                                                    // Optional: Auto-add on click? Or just fill input?
+                                                    // Let's just fill input so user can confirm or add more
+                                                }}
+                                                style={{
+                                                    padding: '0.8rem 1rem',
+                                                    cursor: 'pointer',
+                                                    borderBottom: idx < suggestions.length - 1 ? '1px solid #333' : 'none',
+                                                    color: '#eee'
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.background = '#333'}
+                                                onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                                            >
+                                                {suggestion}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
                             <button type="button" onClick={() => {
                                 handleAddArtist()
                                 fetchExistingAlbumData([...artists, currentArtistName.trim()].join(', '), albumName)
