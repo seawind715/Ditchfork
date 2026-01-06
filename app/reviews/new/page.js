@@ -349,7 +349,12 @@ export default function NewReviewPage() {
         const adminEmail = 'id01035206992@gmail.com'
         const isAdmin = user.email?.toLowerCase().trim() === adminEmail.toLowerCase().trim()
 
-        if (!isAdmin) {
+        // Temporary: Lift limit until 2026-01-31 24:00 KST (which is 2026-02-01 00:00 KST)
+        // KST is UTC+9, so 2026-02-01 00:00 KST is 2026-01-31 15:00 UTC
+        const limitLiftEndDate = new Date('2026-01-31 15:00:00Z') // Equivalent to 2026-02-01 00:00 KST
+        const isLimitLifted = new Date() < limitLiftEndDate
+
+        if (!isAdmin && !isLimitLifted) {
             const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
             const { count, error: countError } = await supabase
                 .from('reviews')
