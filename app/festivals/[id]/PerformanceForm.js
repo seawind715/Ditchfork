@@ -70,8 +70,8 @@ export default function PerformanceForm({ festivalId }) {
                 </div>
 
                 <div>
-                    <label style={{ fontSize: '0.9rem', color: '#888' }}>공연명</label>
-                    <input name="name" required placeholder="예: 오프닝 공연" style={{ width: '100%', padding: '0.5rem' }} />
+                    <label style={{ fontSize: '0.9rem', color: '#888' }}>공연명 (선택)</label>
+                    <input name="name" placeholder="예: 오프닝 공연" style={{ width: '100%', padding: '0.5rem' }} />
                 </div>
 
                 <div>

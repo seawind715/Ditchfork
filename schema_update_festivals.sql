@@ -46,3 +46,6 @@ DROP POLICY IF EXISTS "Users can delete own performances" ON festival_performanc
 CREATE POLICY "Users can delete own performances" 
 ON festival_performances FOR DELETE 
 USING (auth.uid() = user_id);
+
+-- 5. Alter name column to be optional (DROP NOT NULL) - ADDED PER USER REQUEST
+ALTER TABLE festival_performances ALTER COLUMN name DROP NOT NULL;
