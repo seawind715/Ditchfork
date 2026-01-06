@@ -89,13 +89,31 @@ export default async function ReviewDetailPage({ params }) {
                             )}
                         </div>
                         <div>
-                            <div style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
-                                {primaryReview.genre}
+                            <div style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+                                <span style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    {primaryReview.genre}
+                                </span>
+                                {primaryReview.sub_genres && primaryReview.sub_genres.length > 0 && (
+                                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                        {primaryReview.sub_genres.map(sub => (
+                                            <span key={sub} style={{
+                                                fontSize: '0.8rem',
+                                                color: '#bbb',
+                                                background: '#222',
+                                                padding: '0.1rem 0.5rem',
+                                                borderRadius: '4px',
+                                                border: '1px solid #444'
+                                            }}>
+                                                {sub}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <h1 style={{ fontSize: '3.5rem', lineHeight: 1.1, marginBottom: '0.5rem' }}>
                                 {primaryReview.album_name}
                             </h1>
-                            <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                            <div style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontStyle: 'italic', display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'baseline' }}>
                                 by {primaryReview.artist_name?.split(',').map((name, i, arr) => (
                                     <span key={name.trim()}>
                                         <Link href={`/artists/${encodeURIComponent(name.trim())}`} style={{ color: 'inherit', textDecoration: 'none' }} className="hover-underline">
