@@ -16,7 +16,8 @@ export default function PerformanceForm({ festivalId }) {
         const form = e.target
         const data = {
             festival_id: festivalId,
-            order_index: parseInt(form.order_index.value),
+            // order_index: Will be calculated in SQL or fetched before insert.
+            // Let's fetch the current max order first.
             name: form.name.value,
             artist: form.artist.value,
             content: form.content.value,
@@ -33,6 +34,17 @@ export default function PerformanceForm({ festivalId }) {
         }
 
         data.user_id = user.id
+
+        // Calculate next order
+        const { data: maxOrderData } = await supabase
+            .from('festival_performances')
+            .select('order_index')
+            .eq('festival_id', festivalId)
+            .order('order_index', { ascending: false })
+            .limit(1)
+
+        const nextOrder = (maxOrderData && maxOrderData.length > 0) ? maxOrderData[0].order_index + 1 : 1
+        data.order_index = nextOrder
 
         const { error } = await supabase
             .from('festival_performances')
@@ -51,11 +63,8 @@ export default function PerformanceForm({ festivalId }) {
         <div style={{ background: '#222', padding: '1.5rem', borderRadius: '4px', border: '1px solid #333' }}>
             <h3 style={{ marginBottom: '1rem' }}>Add Performance</h3>
             <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '1rem' }}>
-                    <div>
-                        <label style={{ fontSize: '0.9rem', color: '#888' }}>순서</label>
-                        <input name="order_index" type="number" required placeholder="1" style={{ width: '100%', padding: '0.5rem' }} />
-                    </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                    {/* Order input removed for Drag and Drop */}
                     <div>
                         <label style={{ fontSize: '0.9rem', color: '#888' }}>장르</label>
                         <select name="genre" required style={{ width: '100%', padding: '0.5rem' }}>

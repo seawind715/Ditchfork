@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ParticipantForm from './ParticipantForm'
 import PerformanceForm from './PerformanceForm'
+import PerformanceList from './PerformanceList'
 import AdminDeleteButton from '@/components/AdminDeleteButton'
 
 export const revalidate = 0
@@ -106,35 +107,7 @@ export default async function FestivalDetailPage({ params }) {
                                     <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400 }}>누구나 공연 정보를 추가하고 자유롭게 수정할 수 있어요!</span>
                                 </h3>
 
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '3rem' }}>
-                                    {performances?.length === 0 ? (
-                                        <div style={{ padding: '2rem', textAlign: 'center', border: '1px dashed #444', color: '#888' }}>
-                                            등록된 공연이 없습니다. 첫 번째 공연을 등록해주세요!
-                                        </div>
-                                    ) : (
-                                        performances?.map(perf => (
-                                            <div key={perf.id} style={{ display: 'flex', gap: '1.5rem', background: '#1a1a1a', padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
-                                                <div style={{ fontSize: '1.5rem', fontWeight: 700, minWidth: '30px', color: '#666' }}>
-                                                    {perf.order_index}
-                                                </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
-                                                        <span style={{ fontSize: '0.8rem', background: '#333', padding: '0.2rem 0.6rem', borderRadius: '4px', color: '#ccc' }}>
-                                                            {perf.genre || '장르 미정'}
-                                                        </span>
-                                                        <h4 style={{ fontSize: '1.3rem', margin: 0 }}>{perf.name}</h4>
-                                                    </div>
-                                                    <div style={{ fontSize: '1.1rem', color: 'var(--primary)', fontWeight: 600, marginBottom: '0.5rem' }}>
-                                                        {perf.artist}
-                                                    </div>
-                                                    <div style={{ color: '#ccc', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                                                        {perf.content}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
+                                <PerformanceList initialPerformances={performances || []} festivalId={id} user={user} />
 
                                 {/* Add Performance Form */}
                                 {user ? (
