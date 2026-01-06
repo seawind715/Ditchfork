@@ -158,23 +158,25 @@ export default async function FestivalDetailPage({ params }) {
                             </>
                         )}
                     </div>
-                    <div>
-                        <div style={{ background: '#151515', padding: '1.5rem', border: '1px solid var(--border)' }}>
-                            <h3 style={{ marginBottom: '0.5rem' }}>동행 찾기</h3>
-                            <p style={{ color: '#888', marginBottom: '1.5rem' }}>
-                                현재 <strong style={{ color: 'var(--primary)' }}>{count || 0}명</strong>이 함께할 친구를 찾고 있어요.
-                            </p>
-                            <ParticipantForm festivalId={id} />
-                            <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
-                                {participants?.map(p => (
-                                    <div key={p.id} style={{ padding: '0.8rem', background: '#222', borderBottom: '1px solid #333' }}>
-                                        <div style={{ fontWeight: 700 }}>{p.name} <span style={{ fontSize: '0.8rem', fontWeight: 400, color: '#666' }}>({p.student_id})</span></div>
-                                        {p.message && <div style={{ fontSize: '0.9rem', color: '#ccc', marginTop: '0.3rem' }}>{p.message}</div>}
-                                    </div>
-                                ))}
+                    {festival.type !== 'school' && (
+                        <div>
+                            <div style={{ background: '#151515', padding: '1.5rem', border: '1px solid var(--border)' }}>
+                                <h3 style={{ marginBottom: '0.5rem' }}>Find a Friend</h3>
+                                <p style={{ color: '#888', marginBottom: '1.5rem' }}>
+                                    현재 <strong style={{ color: 'var(--primary)' }}>{count || 0}명</strong>이 함께할 친구를 찾고 있어요.
+                                </p>
+                                <ParticipantForm festivalId={id} />
+                                <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
+                                    {participants?.map(p => (
+                                        <div key={p.id} style={{ padding: '0.8rem', background: '#222', borderBottom: '1px solid #333' }}>
+                                            <div style={{ fontWeight: 700 }}>{p.name} <span style={{ fontSize: '0.8rem', fontWeight: 400, color: '#666' }}>({p.student_id})</span></div>
+                                            {p.message && <div style={{ fontSize: '0.9rem', color: '#ccc', marginTop: '0.3rem' }}>{p.message}</div>}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </section>
             </article>
         )
