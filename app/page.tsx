@@ -99,7 +99,7 @@ export default async function Home() {
         <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
           {newReviews.length > 0 ? (
             newReviews.map((review: any) => (
-              <div key={review.id} style={{ minWidth: '280px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+              <div key={review.id} style={{ minWidth: '220px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
                 <ReviewCard review={review} />
               </div>
             ))
@@ -121,7 +121,7 @@ export default async function Home() {
         <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
           {newReleases.length > 0 ? (
             newReleases.map((review: any) => (
-              <div key={review.id} style={{ minWidth: '280px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+              <div key={review.id} style={{ minWidth: '220px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
                 <ReviewCard review={review} />
               </div>
             ))
