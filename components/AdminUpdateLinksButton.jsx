@@ -16,7 +16,10 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
     const updateLinks = async () => {
         setLoading(true)
         try {
-            const term = encodeURIComponent(`${review.artist_name} ${review.album_name}`)
+            // Use only the first artist for iTunes search (iTunes typically lists one primary artist)
+            const artistList = review.artist_name.split(',').map(a => a.trim())
+            const firstArtist = artistList[0]
+            const term = encodeURIComponent(`${firstArtist} ${review.album_name}`)
 
             // Try US store first then KR store
             const stores = ['US', 'KR']
@@ -28,13 +31,18 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
 
                 if (data.results && data.results.length > 0) {
                     const ranked = data.results.map(res => {
-                        const aMatch = res.artistName?.toLowerCase().includes(review.artist_name.toLowerCase()) || review.artist_name.toLowerCase().includes(res.artistName?.toLowerCase())
+                        const itunesArtist = res.artistName?.toLowerCase() || ''
+
+                        // Check if any of our artists match the iTunes artist
+                        const aMatch = artistList.some(name =>
+                            itunesArtist.includes(name.toLowerCase()) || name.toLowerCase().includes(itunesArtist)
+                        )
                         const cMatch = res.collectionName?.toLowerCase().includes(review.album_name.toLowerCase()) || review.album_name.toLowerCase().includes(res.collectionName?.toLowerCase())
 
                         let score = 0
                         if (aMatch) score += 2
                         if (cMatch) score += 3
-                        if (res.artistName?.toLowerCase() === review.artist_name.toLowerCase()) score += 3
+                        if (artistList.some(name => name.toLowerCase() === itunesArtist)) score += 3
                         if (res.collectionName?.toLowerCase() === review.album_name.toLowerCase()) score += 7
 
                         return { ...res, score }
@@ -46,7 +54,9 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
             // Pick the best across all stores
             const bestResult = allResults.sort((a, b) => b.score - a.score)[0]
 
-            if (bestResult && bestResult.score >= 5) {
+            // Lower threshold to handle cross-language artist names (e.g., B-Free vs 비프리)
+            // Album name match (score 3) is more reliable than artist name in these cases
+            if (bestResult && bestResult.score >= 3) {
                 const appleUrl = bestResult.collectionViewUrl
 
                 const odesliResponse = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(appleUrl)}`)

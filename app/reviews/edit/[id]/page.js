@@ -131,6 +131,69 @@ export default function EditReviewPage({ params }) {
         setSubGenres(subGenres.filter(g => g !== tag))
     }
 
+    const fetchAlbumFromAppleMusic = async (url) => {
+        // Extract album ID from URL
+        const albumIdMatch = url.match(/\/album\/[^\/]+\/(\d+)/) || url.match(/\/album\/\d+/)
+        const albumId = albumIdMatch ? albumIdMatch[1] : null
+
+        if (!albumId) return false
+
+        setIsFetchingCover(true)
+        try {
+            // 1. Fetch metadata from iTunes Lookup API
+            // Use 'kr' store as default but it usually works for international IDs too
+            const response = await fetch(`https://itunes.apple.com/lookup?id=${albumId}&country=kr`)
+            const data = await response.json()
+
+            if (data.results && data.results.length > 0) {
+                const albumData = data.results[0]
+
+                // Update Cover Image
+                const highResUrl = albumData.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
+                setCoverImageUrl(highResUrl)
+
+                // Update Album Name
+                setFormData(prev => ({ ...prev, album_name: albumData.collectionName }))
+
+                // Update Year
+                setFormData(prev => ({ ...prev, release_year: albumData.releaseDate.substring(0, 4) }))
+
+                // Update Artists
+                const artistStr = albumData.artistName
+                const detectedArtists = artistStr.split(/&|,/).map(a => a.trim()).filter(a => a)
+                setArtists(detectedArtists)
+                setCurrentArtistName('')
+
+                // 2. Fetch streaming links from Odesli
+                try {
+                    const appleMusicLink = albumData.collectionViewUrl
+                    const odesliResponse = await fetch(`https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(appleMusicLink)}`)
+                    const odesliData = await odesliResponse.json()
+
+                    setStreamingLinks({
+                        spotify: odesliData.linksByPlatform?.spotify?.url || '',
+                        apple: appleMusicLink,
+                        youtube: odesliData.linksByPlatform?.youtubeMusic?.url || odesliData.linksByPlatform?.youtube?.url || ''
+                    })
+                } catch (err) {
+                    console.error('Odesli fetch error:', err)
+                    // Fallback to just Apple Music link
+                    setStreamingLinks(prev => ({
+                        ...prev,
+                        apple: albumData.collectionViewUrl
+                    }))
+                }
+
+                return true
+            }
+        } catch (error) {
+            console.error('Error fetching from Apple Music URL:', error)
+        } finally {
+            setIsFetchingCover(false)
+        }
+        return false
+    }
+
     const fetchCover = async () => {
         const artistList = artists.length > 0 ? artists.join(', ') : currentArtistName.trim()
         const album = formData.album_name?.trim()
@@ -142,7 +205,9 @@ export default function EditReviewPage({ params }) {
 
         setIsFetchingCover(true)
         try {
-            const term = encodeURIComponent(`${artistList} ${album}`)
+            // Use only the first artist for iTunes search (iTunes typically lists one primary artist)
+            const firstArtist = artists.length > 0 ? artists[0] : currentArtistName.trim()
+            const term = encodeURIComponent(`${firstArtist} ${album}`)
 
             // Try US store first then KR store
             const stores = ['US', 'KR']
@@ -180,7 +245,9 @@ export default function EditReviewPage({ params }) {
             // Pick the best across all stores
             const bestResult = allResults.sort((a, b) => b.score - a.score)[0]
 
-            if (bestResult && bestResult.score >= 2) {
+            // Use best result if score is reasonable
+            // Lower threshold to handle cross-language artist names (e.g., B-Free vs 비프리)
+            if (bestResult && bestResult.score >= 1) {
                 const highResUrl = bestResult.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
                 setCoverImageUrl(highResUrl)
 
@@ -329,8 +396,15 @@ export default function EditReviewPage({ params }) {
                             <input
                                 name="cover_image_url"
                                 value={coverImageUrl}
-                                onChange={(e) => setCoverImageUrl(e.target.value)}
-                                placeholder="https://..."
+                                onChange={(e) => {
+                                    const val = e.target.value
+                                    setCoverImageUrl(val)
+                                    // Check if it's an Apple Music URL
+                                    if (val.includes('music.apple.com') && val.includes('/album/')) {
+                                        fetchAlbumFromAppleMusic(val)
+                                    }
+                                }}
+                                placeholder="https://... (Apple Music 링크 붙여넣기 가능)"
                                 style={{ width: '100%', marginBottom: 0 }}
                             />
                             <button
@@ -343,6 +417,9 @@ export default function EditReviewPage({ params }) {
                                 {isFetchingCover ? '찾는 중...' : '이미지 찾기'}
                             </button>
                         </div>
+                        <p style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.4rem' }}>
+                            Apple Music 앨범 링크를 붙여넣으면 정보가 자동 입력됩니다.
+                        </p>
                     </div>
                 </div>
 
