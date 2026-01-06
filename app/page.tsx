@@ -1,4 +1,5 @@
 import Hero from '@/components/Hero'
+import NoticeSection from '@/components/NoticeSection'
 import Footer from '@/components/Footer'
 import ScoreGuide from '@/components/ScoreGuide'
 import ReviewCard from '@/components/ReviewCard'
@@ -44,6 +45,14 @@ export default async function Home() {
         `)
         .order('created_at', { ascending: false })
         .limit(30), // Fetch more for grouping
+      supabase
+        .from('notices')
+        .select(`
+            *,
+            profiles (username)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(5),
       supabase.auth.getUser()
     ])
   } catch (err) {
@@ -59,7 +68,8 @@ export default async function Home() {
   const heroData = results[0]?.data
   const footerData = results[1]?.data
   const allRawReviews = results[2]?.data || []
-  const user = results[3]?.data?.user || null
+  const notices = results[3]?.data || []
+  const user = results[4]?.data?.user || null
 
   // Aggregation
   const groupedReviews = groupReviews(allRawReviews)
@@ -81,6 +91,7 @@ export default async function Home() {
   return (
     <main>
       <Hero initialData={heroData || defaultHero} user={user} />
+      <NoticeSection notices={notices} />
       <ScoreGuide />
 
       {!user && (
