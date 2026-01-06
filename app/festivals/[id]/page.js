@@ -102,7 +102,7 @@ export default async function FestivalDetailPage({ params }) {
                         {festival.type === 'school' ? (
                             <>
                                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span>타임테이블 / 라인업</span>
+                                    <span>Timetable / Lineup</span>
                                     <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400 }}>누구나 공연 정보를 추가하고 자유롭게 수정할 수 있어요!</span>
                                 </h3>
 

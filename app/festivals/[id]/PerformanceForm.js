@@ -49,7 +49,7 @@ export default function PerformanceForm({ festivalId }) {
 
     return (
         <div style={{ background: '#222', padding: '1.5rem', borderRadius: '4px', border: '1px solid #333' }}>
-            <h3 style={{ marginBottom: '1rem' }}>공연 추가하기</h3>
+            <h3 style={{ marginBottom: '1rem' }}>Add Performance</h3>
             <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '1rem' }}>
                     <div>
@@ -85,7 +85,7 @@ export default function PerformanceForm({ festivalId }) {
                 </div>
 
                 <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
-                    {loading ? '등록 중...' : '공연 정보 추가'}
+                    {loading ? 'Adding...' : 'Add Performance'}
                 </button>
             </form>
         </div>
