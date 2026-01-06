@@ -10,15 +10,29 @@ export default function ProfileForm({ user, profile }) {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
 
+    // Parse existing username into ID and Name if possible
+    const initialUsername = profile?.username || ''
+    // Regex to see if it starts with 5 digits
+    const match = initialUsername.match(/^(\d{5})\s+(.+)$/)
+    const initialStudentId = match ? match[1] : (initialUsername.match(/^\d{5}/) ? initialUsername.substring(0, 5) : '')
+    const initialName = match ? match[2] : (initialUsername.replace(/^\d{5}\s*/, ''))
+
+    const isNewUser = !profile?.username
+
     const handleUpdate = async (e) => {
         e.preventDefault()
         setLoading(true)
         setMessage('')
 
         const formData = new FormData(e.target)
+        const studentId = formData.get('studentId')
+        const studentName = formData.get('studentName')
+
+        const fullUsername = `${studentId} ${studentName}`
+
         const updates = {
             id: user.id,
-            username: formData.get('username'),
+            username: fullUsername,
             gender: formData.get('gender'),
             residence: formData.get('residence'),
             updated_at: new Date().toISOString()
@@ -68,13 +82,27 @@ export default function ProfileForm({ user, profile }) {
                 </div>
             </div>
 
+            {isNewUser && (
+                <div style={{ background: 'rgba(255, 51, 51, 0.1)', border: '1px solid var(--primary)', padding: '1rem', marginBottom: '2rem', borderRadius: '4px' }}>
+                    <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)', marginBottom: '0.5rem' }}>환영합니다!</h3>
+                    <p>원활한 커뮤니티 활동을 위해 <strong>학번</strong>과 <strong>이름</strong>을 꼭 입력해주세요.</p>
+                </div>
+            )}
+
             <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 <div className="grid grid-cols-2" style={{ gap: '2rem', gridTemplateColumns: '1fr 1fr' }}>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>Display Name</label>
-                        <input name="username" defaultValue={profile?.username || ''} required style={{ width: '100%' }} />
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>학번</label>
+                        <input name="studentId" defaultValue={initialStudentId} placeholder="10901" required style={{ width: '100%' }} pattern="\d{5}" title="5자리 학번을 입력해주세요" />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>이름</label>
+                        <input name="studentName" defaultValue={initialName} placeholder="김동국" required style={{ width: '100%' }} />
                     </div>
                 </div>
+                <p style={{ color: 'var(--primary)', fontSize: '0.85rem', marginTop: '-1rem' }}>
+                    ※ 꼭 본인의 학번과 이름을 정확히 입력해주세요.
+                </p>
 
                 <div className="grid grid-cols-2" style={{ gap: '2rem', gridTemplateColumns: '1fr 1fr' }}>
                     <div>
