@@ -325,14 +325,15 @@ export default function NewReviewPage() {
                 alert('하루에 작성할 수 있는 리뷰 개수(5개)를 초과했습니다. 내일 다시 시도해주세요!')
                 setLoading(false)
                 return
+                return
             }
         }
         // ------------------------------------------------
 
         const { toTitleCase } = await import('@/utils/format')
-        const normalizedArtist = toTitleCase(review.artist_name)
-        const normalizedAlbum = toTitleCase(review.album_name)
-        const normalizedGenre = toTitleCase(review.genre)
+        const normalizedArtist = toTitleCase(artistNameStr)
+        const normalizedAlbum = toTitleCase(formData.get('album_name'))
+        const normalizedGenre = toTitleCase(formData.get('genre'))
         const normalizedSubGenres = subGenres.map(g => toTitleCase(g))
 
         const { error } = await supabase
