@@ -1,6 +1,7 @@
 import "./globals.css";
 import { createClient } from "@/utils/supabase/server";
 import Navbar from "@/components/Navbar";
+import ProfileCompletionModal from "@/components/ProfileCompletionModal";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -31,8 +32,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar user={user} />
-        {children}
+        <body>
+          <Navbar user={user} />
+          {user && <ProfileCompletionModal user={user} />}
+          {children}
+        </body>
       </body>
     </html>
   );

@@ -59,7 +59,7 @@ export default function ProfileForm({ user, profile }) {
 
     return (
         <div style={{ maxWidth: '600px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem', paddingBottom: '2rem', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border)' }}>
                 <div style={{
                     width: '60px',
                     height: '60px',
@@ -68,7 +68,6 @@ export default function ProfileForm({ user, profile }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.5rem',
                     color: '#666'
                 }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -89,25 +88,25 @@ export default function ProfileForm({ user, profile }) {
                 </div>
             )}
 
-            <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                <div className="grid grid-cols-2" style={{ gap: '2rem', gridTemplateColumns: '1fr 1fr' }}>
+            <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>학번</label>
-                        <input name="studentId" defaultValue={initialStudentId} placeholder="10901" required style={{ width: '100%' }} pattern="\d{5}" title="5자리 학번을 입력해주세요" />
+                        <label style={{ display: 'block', marginBottom: '0.3rem', color: '#888', fontSize: '0.9rem' }}>학번</label>
+                        <input name="studentId" defaultValue={initialStudentId} placeholder="10901" required style={{ width: '100%', padding: '0.6rem' }} pattern="\d{5}" title="5자리 학번을 입력해주세요" />
                     </div>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>이름</label>
-                        <input name="studentName" defaultValue={initialName} placeholder="김동국" required style={{ width: '100%' }} />
+                        <label style={{ display: 'block', marginBottom: '0.3rem', color: '#888', fontSize: '0.9rem' }}>이름</label>
+                        <input name="studentName" defaultValue={initialName} placeholder="김동국" required style={{ width: '100%', padding: '0.6rem' }} />
                     </div>
                 </div>
-                <p style={{ color: 'var(--primary)', fontSize: '0.85rem', marginTop: '-1rem' }}>
+                <p style={{ color: 'var(--primary)', fontSize: '0.8rem', marginTop: '-0.8rem' }}>
                     ※ 꼭 본인의 학번과 이름을 정확히 입력해주세요.
                 </p>
 
-                <div className="grid grid-cols-2" style={{ gap: '2rem', gridTemplateColumns: '1fr 1fr' }}>
+                <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>Gender</label>
-                        <select name="gender" defaultValue={profile?.gender || ''} style={{ width: '100%' }}>
+                        <label style={{ display: 'block', marginBottom: '0.3rem', color: '#888', fontSize: '0.9rem' }}>Gender</label>
+                        <select name="gender" defaultValue={profile?.gender || ''} style={{ width: '100%', padding: '0.6rem' }}>
                             <option value="">Select...</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -115,15 +114,15 @@ export default function ProfileForm({ user, profile }) {
                         </select>
                     </div>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888' }}>Residence</label>
-                        <input name="residence" defaultValue={profile?.residence || ''} placeholder="City, Country" style={{ width: '100%' }} />
+                        <label style={{ display: 'block', marginBottom: '0.3rem', color: '#888', fontSize: '0.9rem' }}>Residence</label>
+                        <input name="residence" defaultValue={profile?.residence || ''} placeholder="City, Country" style={{ width: '100%', padding: '0.6rem' }} />
                     </div>
                 </div>
 
                 {message && <div style={{ color: 'var(--primary)', fontWeight: 600 }}>{message}</div>}
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                    <button type="submit" className="btn" disabled={loading} style={{ padding: '0.8rem 1.5rem', width: 'auto' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                    <button type="submit" className="btn" disabled={loading} style={{ padding: '0.7rem 1.2rem', width: 'auto', fontSize: '0.9rem' }}>
                         {loading ? 'Saving...' : 'Save Changes'}
                     </button>
 
@@ -131,7 +130,7 @@ export default function ProfileForm({ user, profile }) {
                         type="button"
                         onClick={handleSignOut}
                         className="btn btn-outline"
-                        style={{ borderColor: '#333', color: '#666', width: 'auto', padding: '0.8rem 1.5rem' }}
+                        style={{ borderColor: '#333', color: '#666', width: 'auto', padding: '0.7rem 1.2rem', fontSize: '0.9rem' }}
                     >
                         Sign Out
                     </button>

@@ -66,18 +66,29 @@ export default async function PublicProfilePage({ params }) {
                     width: '120px',
                     height: '120px',
                     borderRadius: '50%',
-                    background: 'var(--border)',
+                    background: '#222',
                     margin: '0 auto 2rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '4rem',
-                    boxShadow: '0 0 20px rgba(255,0,0,0.1)'
+                    color: '#666'
                 }}>
-                    👤
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                 </div>
 
-                <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{profile.username || '알 수 없는 사용자'}</h1>
+                <div style={{ marginBottom: '2rem' }}>
+                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 800 }}>
+                        {profile.username?.match(/^(\d{5})\s+(.+)$/)?.[2] || profile.username || '알 수 없는 사용자'}
+                    </h1>
+                    {profile.username?.match(/^\d{5}/) && (
+                        <div style={{ fontSize: '1.1rem', color: '#666', fontFamily: 'monospace' }}>
+                            {profile.username.match(/^(\d{5})/)[1]}
+                        </div>
+                    )}
+                </div>
 
                 {profile.is_banned && (
                     <div style={{ color: 'var(--primary)', fontWeight: 'bold', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,0,0,0.1)', border: '1px solid var(--primary)' }}>
@@ -85,15 +96,36 @@ export default async function PublicProfilePage({ params }) {
                     </div>
                 )}
 
-                <div style={{ background: '#111', padding: '2rem', border: '1px solid var(--border)', textAlign: 'left', borderRadius: '8px' }}>
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <strong style={{ color: '#888', display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', textTransform: 'uppercase' }}>성별</strong>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 500 }}>{profile.gender === 'male' ? '남성' : profile.gender === 'female' ? '여성' : profile.gender === 'other' ? '기타' : '정보 없음'}</div>
+                <div style={{
+                    background: '#111',
+                    padding: '1.5rem',
+                    border: '1px solid var(--border)',
+                    textAlign: 'left',
+                    borderRadius: '8px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                    gap: '1.5rem'
+                }}>
+                    <div>
+                        <strong style={{ color: '#666', display: 'block', marginBottom: '0.3rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>학번</strong>
+                        <div style={{ fontSize: '1rem', fontWeight: 500, color: '#ccc' }}>
+                            {profile.username?.match(/^(\d{5})/)?.[1] || '미입력'}
+                        </div>
+                    </div>
+                    <div>
+                        <strong style={{ color: '#666', display: 'block', marginBottom: '0.3rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>이름</strong>
+                        <div style={{ fontSize: '1rem', fontWeight: 500, color: '#ccc' }}>
+                            {profile.username?.match(/^(\d{5})\s+(.+)$/)?.[2] || profile.username || '알 수 없는 사용자'}
+                        </div>
+                    </div>
+                    <div>
+                        <strong style={{ color: '#666', display: 'block', marginBottom: '0.3rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>성별</strong>
+                        <div style={{ fontSize: '1rem', fontWeight: 500, color: '#ccc' }}>{profile.gender === 'male' ? '남성' : profile.gender === 'female' ? '여성' : profile.gender === 'other' ? '기타' : '정보 없음'}</div>
                     </div>
 
                     <div>
-                        <strong style={{ color: '#888', display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', textTransform: 'uppercase' }}>거주지</strong>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 500 }}>{profile.residence || '정보 없음'}</div>
+                        <strong style={{ color: '#666', display: 'block', marginBottom: '0.3rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>거주지</strong>
+                        <div style={{ fontSize: '1rem', fontWeight: 500, color: '#ccc' }}>{profile.residence || '정보 없음'}</div>
                     </div>
                 </div>
 
