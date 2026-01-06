@@ -25,8 +25,8 @@ export default function NewFestivalPage() {
 
         // Combine Date and Time inputs
         const startDay = formData.get('start_day')
-        const startHour = formData.get('start_hour')
-        const startMinute = formData.get('start_minute')
+        const startHour = isSchool ? '00' : formData.get('start_hour')
+        const startMinute = isSchool ? '00' : formData.get('start_minute')
         const startDateISO = `${startDay}T${startHour}:${startMinute}:00`
 
         const festival = {
@@ -100,7 +100,7 @@ export default function NewFestivalPage() {
 
                 <div>
                     <label>페스티벌 이름</label>
-                    <input name="name" required placeholder={isSchool ? "예: 2026 동국대학교 대동제" : "예: Incheon Pentaport Rock Festival 2026"} />
+                    <input name="name" required placeholder={isSchool ? "예: 음악과 그림이 있는 풍경" : "예: Incheon Pentaport Rock Festival 2026"} />
                 </div>
 
                 <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
@@ -117,15 +117,19 @@ export default function NewFestivalPage() {
                             style={{ marginBottom: '0.5rem', cursor: 'pointer' }}
                             onClick={(e) => e.target.showPicker && e.target.showPicker()}
                         />
-                        <label style={{ fontSize: '0.9rem', color: '#888' }}>시작 시간</label>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <select name="start_hour" required style={{ marginBottom: 0 }}>
-                                {hours.map(h => <option key={h} value={h}>{h}시</option>)}
-                            </select>
-                            <select name="start_minute" required style={{ marginBottom: 0 }}>
-                                {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
-                            </select>
-                        </div>
+                        {!isSchool && (
+                            <>
+                                <label style={{ fontSize: '0.9rem', color: '#888' }}>시작 시간</label>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <select name="start_hour" required style={{ marginBottom: 0 }}>
+                                        {hours.map(h => <option key={h} value={h}>{h}시</option>)}
+                                    </select>
+                                    <select name="start_minute" required style={{ marginBottom: 0 }}>
+                                        {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
+                                    </select>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 
