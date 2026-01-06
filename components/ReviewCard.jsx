@@ -54,9 +54,7 @@ export default function ReviewCard({ review }) {
                     <div className="card-author" style={{ marginBottom: '0.5rem', fontSize: '0.85rem', position: 'relative', zIndex: 10, display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
                         {review.artist_name?.split(',').map((name, i, arr) => (
                             <span key={name.trim()}>
-                                <Link href={`/artists/${encodeURIComponent(name.trim())}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
-                                    {name.trim()}
-                                </Link>
+                                {name.trim()}
                                 {i < arr.length - 1 && <span style={{ marginLeft: '0.1rem', opacity: 0.5 }}>,</span>}
                             </span>
                         ))}

@@ -19,6 +19,7 @@ export function groupReviews(reviews) {
                 genre: review.genre,
                 total_rating: 0,
                 review_count: 0,
+                release_year: review.release_year, // Include release_year for filtering
                 created_at: review.created_at, // To sort by latest
                 reviews: [] // Store individual reviews if needed
             };
@@ -34,6 +35,7 @@ export function groupReviews(reviews) {
             groups[key].cover_image_url = review.cover_image_url;
             groups[key].genre = review.genre;
             groups[key].created_at = review.created_at;
+            groups[key].release_year = review.release_year; // Update year just in case
             // Note: artist/album name casing might differ slightly in DB, 
             // but we use the first one encountered or the latest.
             groups[key].artist_name = review.artist_name;
