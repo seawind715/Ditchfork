@@ -19,7 +19,7 @@ export default async function NoticeListPage() {
     return (
         <main className="container section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h1 style={{ margin: 0 }}>공지사항</h1>
+                <h1 style={{ margin: 0 }}>Information</h1>
                 {isAdmin && (
                     <Link href="/notices/new" className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
                         글쓰기

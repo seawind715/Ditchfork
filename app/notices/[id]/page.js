@@ -29,7 +29,7 @@ export default async function NoticeDetailPage({ params }) {
             <div style={{ marginBottom: '2rem', borderBottom: '1px solid #333', paddingBottom: '2rem' }}>
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                     <Link href="/notices" style={{ color: '#888', textDecoration: 'none', fontSize: '0.9rem' }}>
-                        ← 공지사항 목록
+                        ← List
                     </Link>
                 </div>
                 <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{notice.title}</h1>
@@ -39,7 +39,12 @@ export default async function NoticeDetailPage({ params }) {
                         <span>날짜: {new Date(notice.created_at).toLocaleDateString()}</span>
                     </div>
                     {isAdmin && (
-                        <AdminDeleteButton table="notices" id={notice.id} redirectTo="/notices" userEmail={user?.email} />
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Link href={`/notices/edit/${notice.id}`} className="btn btn-outline" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', borderColor: '#444' }}>
+                                수정
+                            </Link>
+                            <AdminDeleteButton table="notices" id={notice.id} redirectTo="/notices" userEmail={user?.email} />
+                        </div>
                     )}
                 </div>
             </div>

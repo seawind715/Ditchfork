@@ -9,10 +9,10 @@ export default function NoticeSection({ notices, user }) {
     if ((!notices || notices.length === 0) && !isAdmin) return null
 
     return (
-        <section className="container section" style={{ marginTop: '-2rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
+        <section className="container section" style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>📢 공지사항</h3>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Information</h3>
                     {isAdmin && (
                         <Link
                             href="/notices/new"
