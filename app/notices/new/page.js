@@ -44,6 +44,7 @@ export default function NewNoticePage() {
             setSubmitting(false)
         } else {
             alert('공지사항이 등록되었습니다.')
+            router.refresh()
             router.push('/notices')
         }
     }
