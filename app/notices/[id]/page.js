@@ -6,6 +6,29 @@ import AdminDeleteButton from '@/components/AdminDeleteButton'
 
 export const revalidate = 0
 
+export async function generateMetadata({ params }) {
+    const { id } = await params
+    try {
+        const supabase = await createClient()
+        if (!supabase) return { title: 'Ditchfork' }
+
+        const { data: notice } = await supabase
+            .from('notices')
+            .select('title')
+            .eq('id', id)
+            .single()
+
+        if (!notice) return { title: 'Ditchfork' }
+
+        return {
+            title: `${notice.title} | Notice | 디치포크 Ditchfork`,
+            description: `Ditchfork 공지사항: ${notice.title}`,
+        }
+    } catch (e) {
+        return { title: 'Ditchfork' }
+    }
+}
+
 export default async function NoticeDetailPage({ params }) {
     const { id } = await params
     const supabase = await createClient()

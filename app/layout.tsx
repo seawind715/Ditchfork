@@ -4,12 +4,18 @@ import Navbar from "@/components/Navbar";
 import ProfileCompletionModal from "@/components/ProfileCompletionModal";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Ditchfork | 가장 신뢰받는 음악 비평 커뮤니티",
-  description: "최신 앨범 리뷰, 평점, 그리고 페스티벌 동행 찾기까지. 음악 애호가들을 위한 프리미엄 커뮤니티 Ditchfork입니다.",
-  metadataBase: new URL("https://ditchfork.vercel.app"),
-  icons: {
-    icon: "/favicon.png",
+export const metadata = {
+  title: {
+    default: "디치포크 Ditchfork - DGHS 문화 생활 커뮤니티",
+    template: "%s | 디치포크 Ditchfork"
+  },
+  description: "DGHS 문화 생활 커뮤니티 디치포크(Ditchfork). 음악 취향 공유부터 학교 축제 정보까지.",
+  keywords: ["디치포크", "Ditchfork", "DGHS", "동탄국제고", "동국고", "음악 리뷰", "앨범 추천", "학교 축제", "문화 생활"],
+  openGraph: {
+    title: "디치포크 Ditchfork",
+    description: "DGHS 문화 생활 커뮤니티 디치포크",
+    type: "website",
+    locale: "ko_KR",
   },
 };
 
@@ -30,13 +36,18 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="ko">
       <body>
-        <body>
-          <Navbar user={user} />
-          {user && <ProfileCompletionModal user={user} />}
+        <Navbar user={user} />
+        <main style={{ minHeight: '80vh' }}>
           {children}
-        </body>
+        </main>
+        <footer className="footer section">
+          <div className="container" style={{ textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
+            <p>&copy; {new Date().getFullYear()} Ditchfork. All rights reserved.</p>
+          </div>
+        </footer>
+        {user && <ProfileCompletionModal user={user} />}
       </body>
     </html>
   );
