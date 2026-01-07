@@ -337,10 +337,10 @@ export default function EditReviewPage({ params }) {
             album_name: normalizedAlbum,
             genre: normalizedGenre,
             sub_genres: normalizedSubGenres,
-            cover_image_url: coverImageUrl || formData.get('cover_image_url'),
+            cover_image_url: coverImageUrl || formData.cover_image_url,
             is_cover_hidden: isCoverHidden,
-            rating: parseFloat(formData.get('rating')),
-            content: formData.get('content'),
+            rating: parseFloat(formData.rating),
+            content: formData.content,
             spotify_url: streamingLinks.spotify,
             apple_music_url: streamingLinks.apple,
             youtube_music_url: streamingLinks.youtube

@@ -67,7 +67,7 @@ export default function ReviewCard({ review }) {
                 <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <h3 className="card-title" style={{
                         fontSize: '1.1rem',
-                        marginBottom: '1rem',
+                        marginBottom: '1.5rem',
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
