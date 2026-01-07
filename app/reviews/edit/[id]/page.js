@@ -527,7 +527,7 @@ export default function EditReviewPage({ params }) {
                                 {isFetchingCover ? '찾는 중...' : '이미지 찾기'}
                             </button>
                         </div>
-                        <p style={{ fontSize: '0.75rem', color: '#888' }}>
+                        <p style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.75rem' }}>
                             '이미지 찾기' 버튼을 누르거나 <strong>Apple Music 앨범 링크를 직접 붙여넣으면</strong> 앨범 커버와 스트리밍 링크가 자동 입력됩니다.
                         </p>
                         <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
