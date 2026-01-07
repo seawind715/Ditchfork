@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toTitleCase } from '@/utils/format'
 
 export default function NewReviewPage() {
     const router = useRouter()
@@ -373,13 +374,12 @@ export default function NewReviewPage() {
         }
         // ------------------------------------------------
 
-        const { toTitleCase } = await import('@/utils/format')
         const normalizedArtist = toTitleCase(artistNameStr)
         const normalizedAlbum = toTitleCase(formData.get('album_name'))
         const normalizedGenre = toTitleCase(formData.get('genre'))
         const normalizedSubGenres = subGenres.map(g => toTitleCase(g))
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('reviews')
             .insert({
                 ...review,
@@ -389,13 +389,15 @@ export default function NewReviewPage() {
                 sub_genres: normalizedSubGenres,
                 user_id: user.id
             })
+            .select()
+            .single()
 
         if (error) {
             console.error(error)
             alert('저장 실패: ' + error.message)
         } else {
-            alert('리뷰가 등록되었습니다!')
-            router.push('/')
+            router.refresh()
+            router.push(`/reviews/${data.id}`)
         }
         setLoading(false)
     }
@@ -403,6 +405,9 @@ export default function NewReviewPage() {
     return (
         <div className="section container" style={{ maxWidth: '800px' }}>
             <h1>새 리뷰 작성</h1>
+            <p style={{ color: '#888', marginBottom: '2rem', marginTop: '-0.5rem' }}>
+                기존에 등록된 앨범도 다시 리뷰할 수 있습니다.
+            </p>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                 <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
