@@ -76,7 +76,22 @@ export default async function ReviewDetailPage({ params }) {
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             overflow: 'hidden'
                         }}>
-                            {primaryReview.cover_image_url ? (
+                            {primaryReview.is_cover_hidden ? (
+                                <div style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: '#111',
+                                    color: '#666',
+                                    textAlign: 'center'
+                                }}>
+                                    <span style={{ fontSize: '3rem', marginBottom: '1rem' }}>🙈</span>
+                                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>Sensitive Content<br />Cover Hidden</span>
+                                </div>
+                            ) : primaryReview.cover_image_url ? (
                                 <Image
                                     src={primaryReview.cover_image_url}
                                     alt={`${primaryReview.album_name} cover`}

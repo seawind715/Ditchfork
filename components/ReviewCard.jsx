@@ -8,34 +8,7 @@ export default function ReviewCard({ review }) {
     const genre = review.genre || 'Unknown'
 
     return (
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', position: 'relative', height: '100%' }}>
-            <Link href={`/reviews/${review.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <div className="card-image" style={{ position: 'relative', overflow: 'hidden' }}>
-                    {review.cover_image_url ? (
-                        <Image
-                            src={review.cover_image_url}
-                            alt={`${review.album_name} cover`}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            style={{ objectFit: 'cover' }}
-                            className="transition-opacity duration-300"
-                        />
-                    ) : (
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666', background: '#333' }}>
-                            No Cover
-                        </div>
-                    )}
-                </div>
-
-                <div className="card-content" style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginBottom: '0.8rem' }}>
-                        <span className="card-meta" style={{ marginBottom: 0 }}>{genre}</span>
-                        {review.sub_genres && review.sub_genres.length > 0 && (
-                            <span style={{ fontSize: '0.7rem', color: '#888', fontStyle: 'italic' }}>
-                                {review.sub_genres.join(', ')}
-                            </span>
-                        )}
-                    </div>
+                    </div >
                     <h3 className="card-title" style={{
                         fontSize: '1.1rem',
                         marginBottom: '0.4rem',
@@ -87,10 +60,10 @@ export default function ReviewCard({ review }) {
                             )}
                         </div>
                     </div>
-                </div>
-            </Link>
+                </div >
+            </Link >
 
 
-        </div>
+        </div >
     )
 }

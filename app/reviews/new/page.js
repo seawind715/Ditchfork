@@ -15,6 +15,7 @@ export default function NewReviewPage() {
     const [currentSubGenre, setCurrentSubGenre] = useState('')
 
     const [coverImageUrl, setCoverImageUrl] = useState('')
+    const [isCoverHidden, setIsCoverHidden] = useState(false)
     const [isFetchingCover, setIsFetchingCover] = useState(false)
     const [streamingLinks, setStreamingLinks] = useState({
         spotify: '',
@@ -330,6 +331,7 @@ export default function NewReviewPage() {
             genre: formData.get('genre'),
             sub_genres: subGenres, // Include the array
             cover_image_url: coverImageUrl || formData.get('cover_image_url'),
+            is_cover_hidden: isCoverHidden,
             rating: parseFloat(formData.get('rating')),
             content: formData.get('content'),
             spotify_url: streamingLinks.spotify,
@@ -566,6 +568,18 @@ export default function NewReviewPage() {
                         <p style={{ fontSize: '0.75rem', color: '#888' }}>
                             '이미지 찾기' 버튼을 누르거나 <strong>Apple Music 앨범 링크를 직접 붙여넣으면</strong> 앨범 커버와 스트리밍 링크가 자동 입력됩니다.
                         </p>
+                        <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <input
+                                type="checkbox"
+                                id="hideCover"
+                                checked={isCoverHidden}
+                                onChange={(e) => setIsCoverHidden(e.target.checked)}
+                                style={{ width: 'auto', marginBottom: 0 }}
+                            />
+                            <label htmlFor="hideCover" style={{ fontSize: '0.9rem', color: '#aaa', cursor: 'pointer', userSelect: 'none', marginBottom: 0 }}>
+                                커버 이미지 숨기기 (민감한 콘텐츠)
+                            </label>
+                        </div>
                     </div>
                 </div>
 
