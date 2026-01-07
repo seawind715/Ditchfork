@@ -46,7 +46,7 @@ export default async function ReviewsPage({ searchParams }) {
     // Grouping
     const reviews = groupReviews(rawReviews)
 
-    const genres = ['Rock', 'Pop', 'Hip-Hop', 'Electronic', 'Jazz', 'Classical Music', 'K-Pop', 'Folk', 'Experimental', 'Uncategorized']
+    const genres = ['Rock', 'Pop', 'Hip-Hop', 'Electronic', 'Jazz', 'Classical Music', 'K-Pop', 'Ballad', 'Folk', 'Experimental', 'Uncategorized']
 
     return (
         <div className="container section">

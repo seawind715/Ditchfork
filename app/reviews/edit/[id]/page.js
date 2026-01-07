@@ -528,6 +528,7 @@ export default function EditReviewPage({ params }) {
                             <option value="Jazz">Jazz</option>
                             <option value="Classical Music">Classical Music</option>
                             <option value="K-Pop">K-Pop</option>
+                            <option value="Ballad">Ballad</option>
                             <option value="Folk">Folk</option>
                             <option value="Experimental">Experimental</option>
                             <option value="Uncategorized">Uncategorized</option>

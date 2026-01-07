@@ -8,7 +8,7 @@ export default function ReviewCard({ review }) {
     const genre = review.genre || 'Unknown'
 
     return (
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', position: 'relative', height: '100%' }}>
             <Link href={`/reviews/${review.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div className="card-image" style={{ position: 'relative', overflow: 'hidden' }}>
                     {review.cover_image_url ? (
@@ -51,7 +51,18 @@ export default function ReviewCard({ review }) {
                             </span>
                         )}
                     </h3>
-                    <div className="card-author" style={{ marginBottom: '0.5rem', fontSize: '0.85rem', position: 'relative', zIndex: 10, display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                    <div className="card-author" style={{
+                        marginBottom: '0.5rem',
+                        fontSize: '0.85rem',
+                        position: 'relative',
+                        zIndex: 10,
+                        display: 'flex',
+                        flexWrap: 'nowrap',
+                        gap: '0.3rem',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis'
+                    }}>
                         {review.artist_name?.split(',').map((name, i, arr) => (
                             <span key={name.trim()}>
                                 {name.trim()}
@@ -79,13 +90,7 @@ export default function ReviewCard({ review }) {
                 </div>
             </Link>
 
-            {(!review.review_count || review.review_count <= 1) && (
-                <div style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.75rem', color: '#666', zIndex: 2 }}>
-                    by <Link href={`/users/${review.user_id}`} className="hover-underline" style={{ color: 'inherit', textDecoration: 'none' }}>
-                        {review.profiles?.username || review.author_name}
-                    </Link>
-                </div>
-            )}
+
         </div>
     )
 }

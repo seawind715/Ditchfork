@@ -264,13 +264,15 @@ export default function NewReviewPage() {
             const bestResult = allResults.sort((a, b) => b.score - a.score)[0]
 
             // Log for debugging
+            /* 
             if (allResults.length > 0) {
                 console.log('iTunes 검색 결과:', allResults.slice(0, 3).map(r => ({
                     artist: r.artistName,
                     album: r.collectionName,
                     score: r.score
                 })))
-            }
+            } 
+            */
 
             // Use best result if we have any results, even with low score
             // This handles cases where iTunes uses different language (e.g., Korean vs English names)
@@ -280,8 +282,7 @@ export default function NewReviewPage() {
 
                 // Show warning if score is low
                 if (bestResult.score < 2) {
-                    console.warn('낮은 매칭 점수:', bestResult.score, '- 아티스트명이나 앨범명이 iTunes와 다를 수 있습니다.')
-                    console.log('찾은 앨범:', bestResult.artistName, '-', bestResult.collectionName)
+                    // console.warn('낮은 매칭 점수:', bestResult.score, '- 아티스트명이나 앨범명이 iTunes와 다를 수 있습니다.')
                 }
 
                 if (bestResult.collectionViewUrl) {
@@ -585,6 +586,7 @@ export default function NewReviewPage() {
                             <option value="Jazz">Jazz</option>
                             <option value="Classical Music">Classical Music</option>
                             <option value="K-Pop">K-Pop</option>
+                            <option value="Ballad">Ballad</option>
                             <option value="Folk">Folk</option>
                             <option value="Experimental">Experimental</option>
                             <option value="Uncategorized">Uncategorized</option>

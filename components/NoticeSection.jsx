@@ -59,7 +59,12 @@ export default function NoticeSection({ notices, user }) {
                             onMouseEnter={(e) => e.currentTarget.style.background = '#252525'}
                             onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                         >
-                            <div style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginRight: '1rem' }}>
+                            <div style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginRight: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                {notice.is_pinned && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#888', flexShrink: 0 }}>
+                                        <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6l1 1 1-1v-6h5v-2z" />
+                                    </svg>
+                                )}
                                 <span style={{ fontWeight: 500 }}>{notice.title}</span>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: '#888', flexShrink: 0 }}>

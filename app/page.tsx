@@ -51,6 +51,7 @@ export default async function Home() {
             *,
             profiles (username)
         `)
+        .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(5),
       supabase.auth.getUser()
@@ -77,7 +78,7 @@ export default async function Home() {
 
   // New Release (current year - 3)
   const currentYear = new Date().getFullYear()
-  const releaseLimit = currentYear - 3
+  const releaseLimit = currentYear - 1
   const newReleases = groupedReviews
     .filter(r => parseInt(r.release_year) >= releaseLimit)
     .slice(0, 10)
@@ -138,7 +139,7 @@ export default async function Home() {
             ))
           ) : (
             <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
-              <p style={{ color: '#666' }}>최근 3년 내 발매된 앨범에 대한 리뷰가 없습니다.</p>
+              <p style={{ color: '#666' }}>최근 2년 내 발매된 앨범에 대한 리뷰가 없습니다.</p>
             </div>
           )}
         </div>
