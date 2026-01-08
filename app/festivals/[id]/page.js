@@ -91,9 +91,10 @@ export default async function FestivalDetailPage({ params }) {
             dateStr = `${dateStr} ~ ${endDateStr}`
         }
 
-        // Check if ended
+        // Check if ended & started
         const now = new Date()
-        const isEnded = end ? (new Date(end) < now) : (new Date(start.getTime() + 24 * 60 * 60 * 1000) < now) // Roughly check end of start day if no end date
+        const isEnded = end ? (new Date(end) < now) : (new Date(start.getTime() + 24 * 60 * 60 * 1000) < now)
+        const isStarted = now >= start
 
         return (
             <article>
