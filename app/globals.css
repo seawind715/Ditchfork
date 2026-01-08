@@ -361,43 +361,49 @@ textarea:focus {
   /* Festival Card Mobile */
   .festival-card {
     height: auto !important;
-    /* Auto height for stacking */
     flex-direction: column !important;
   }
 
-  .festival-card>div:first-child,
-  .festival-card>div:last-child {
+  /* Main Link Wrapper on Mobile */
+  .festival-card-main-link {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  /* Date Section on Mobile */
+  .festival-card-date {
     width: 100% !important;
     height: auto !important;
-    padding: 1rem;
+    padding: 0.5rem 1rem !important;
     text-align: left !important;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 1rem;
-    border-right: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  /* Body Section on Mobile */
+  .festival-card-body {
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  /* Action Section on Mobile */
+  .festival-card-action {
+    width: 100% !important;
+    height: auto !important;
+    padding: 0.8rem !important;
     border-left: none !important;
-    border-bottom: 1px solid var(--border);
-    min-height: auto !important;
+    border-top: 1px dashed var(--border) !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
   }
 
-  /* Left Date Box Adjustments */
-  .festival-card>div:first-child {
-    /* Date box */
-    align-items: center;
-  }
-
-  /* Right Status Box Adjustments */
-  .festival-card>div:last-child {
-    /* Status box */
-    border-bottom: none;
-    order: -1;
-    /* Show status at top on mobile? Or bottom. Let's keep bottom or move to top. */
-    /* Actually status "D-Day" is important. Display as row: Date | Status? */
-    /* Since structure is [DateLeft] [Content] [StatusRight] */
-    /* Converting to column: [DateLeft] [Content] [StatusRight] */
-    /* Or [StatusRight] [Content] [DateLeft]? */
-    /* Let's keep standard source order for now */
+  .festival-card-action>a {
+    flex-direction: row !important;
+    gap: 0.5rem;
   }
 
   /* Navbar Mobile */
@@ -412,11 +418,9 @@ textarea:focus {
     gap: 1rem;
     width: 100%;
     justify-content: flex-start;
-    /* Ensure left align */
   }
 
   .container {
     padding: 0 1rem;
-    /* Less padding on small screens */
   }
 }

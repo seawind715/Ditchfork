@@ -45,6 +45,7 @@ export default function FestivalCard({ festival, userEmail }) {
             {/* Main Clickable Area: Date + Info */}
             <Link
                 href={`/festivals/${festival.id}`}
+                className="festival-card-main-link"
                 style={{ display: 'flex', flex: 1, textDecoration: 'none', color: 'inherit' }}
             >
                 {/* Date Section (Left) */}
