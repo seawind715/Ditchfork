@@ -41,7 +41,6 @@ export default function FestivalCard({ festival, userEmail }) {
     const typeLabel = festival.type === 'school' ? '교내' : '교외'
 
     return (
-    return (
         <div className="card festival-card">
             {/* Main Clickable Area: Date + Info */}
             <Link
@@ -87,6 +86,5 @@ export default function FestivalCard({ festival, userEmail }) {
                 <AdminDeleteButton table="festivals" id={festival.id} redirectTo="/festivals" userEmail={userEmail} />
             </div>
         </div>
-    )
     )
 }
