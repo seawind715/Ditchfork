@@ -16,6 +16,7 @@ export function groupReviews(reviews) {
                 artist_name: review.artist_name,
                 album_name: review.album_name,
                 cover_image_url: review.cover_image_url,
+                is_cover_hidden: review.is_cover_hidden, // Pass through hidden state
                 genre: review.genre,
                 total_rating: 0,
                 review_count: 0,
@@ -33,6 +34,7 @@ export function groupReviews(reviews) {
         if (new Date(review.created_at) > new Date(groups[key].created_at)) {
             groups[key].id = review.id;
             groups[key].cover_image_url = review.cover_image_url;
+            groups[key].is_cover_hidden = review.is_cover_hidden; // Update hidden state
             groups[key].genre = review.genre;
             groups[key].created_at = review.created_at;
             groups[key].release_year = review.release_year; // Update year just in case
