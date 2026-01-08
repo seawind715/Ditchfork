@@ -23,7 +23,7 @@ export default function Navbar({ user }) {
 
                 <ul className="nav-links">
                     <li><Link href="/reviews" className="nav-item">Album</Link></li>
-                    <li><Link href="/festivals" className="nav-item">Festival</Link></li>
+                    <li><Link href="/festivals" className="nav-item">Event</Link></li>
                     <li><Link href="/movies" className="nav-item">Movie</Link></li>
 
                     {user ? (

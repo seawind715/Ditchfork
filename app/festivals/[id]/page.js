@@ -5,6 +5,7 @@ import ParticipantForm from './ParticipantForm'
 import PerformanceForm from './PerformanceForm'
 import PerformanceList from './PerformanceList'
 import AdminDeleteButton from '@/components/AdminDeleteButton'
+import FestivalReviewSection from '@/components/FestivalReviewSection' // New component
 
 export const revalidate = 0
 
@@ -19,8 +20,8 @@ export async function generateMetadata({ params }) {
             .eq('id', id)
             .maybeSingle()
 
-        if (!festival) return { title: 'Festival Not Found | Ditchfork' }
-        return { title: `${festival.name} | Festival | Ditchfork` }
+        if (!festival) return { title: 'Event Not Found | Ditchfork' }
+        return { title: `${festival.name} | Event | Ditchfork` }
     } catch (e) {
         return { title: 'Ditchfork' }
     }
@@ -72,9 +73,27 @@ export default async function FestivalDetailPage({ params }) {
             performances = perfs
         }
 
-        const date = new Date(festival.start_date).toLocaleDateString('ko-KR', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+        // 4. Date Logic
+        const start = new Date(festival.start_date)
+        const end = festival.end_date ? new Date(festival.end_date) : null
+
+        let dateStr = start.toLocaleDateString('ko-KR', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: 'numeric', minute: 'numeric' // Show time logic: if end date exists, maybe simpler format?
+            // Actually, for consistency, let's keep detailed start time.
         })
+
+        if (end) {
+            const endDateStr = end.toLocaleDateString('ko-KR', {
+                month: 'long', day: 'numeric', weekday: 'long'
+            })
+            // If simple string needed:
+            dateStr = `${dateStr} ~ ${endDateStr}`
+        }
+
+        // Check if ended
+        const now = new Date()
+        const isEnded = end ? (new Date(end) < now) : (new Date(start.getTime() + 24 * 60 * 60 * 1000) < now) // Roughly check end of start day if no end date
 
         return (
             <article>
@@ -83,7 +102,7 @@ export default async function FestivalDetailPage({ params }) {
                         <Link href="/festivals" className="btn btn-outline" style={{ marginBottom: '2rem' }}>← 목록으로</Link>
                         <h1 style={{ fontSize: '4rem', lineHeight: 1.1, marginBottom: '1rem' }}>{festival.name}</h1>
                         <div style={{ fontSize: '1.5rem', color: '#888', marginBottom: '2rem' }}>
-                            {date} <br />
+                            {dateStr} <br />
                             @ {festival.location}
                         </div>
                         <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
@@ -100,6 +119,7 @@ export default async function FestivalDetailPage({ params }) {
                 <section className="container section grid" style={{ gridTemplateColumns: '2fr 1fr', gap: '4rem' }}>
 
                     <div>
+                        {/* Content Section */}
                         {festival.type === 'school' ? (
                             <>
                                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -109,11 +129,17 @@ export default async function FestivalDetailPage({ params }) {
 
                                 <PerformanceList initialPerformances={performances || []} festivalId={id} user={user} />
 
-                                {/* Add Performance Form */}
+                                {/* Add Performance Form - Always visible for school events, even if ended, for history/record? 
+                                    Or hide if ended? User said "행사가 끝난 이후 ... 행사에 후기를 달 수 있게 만들어줘". 
+                                    Doesn't explicitly say disable editing. Let's keep it open for now or maybe user wants it locked?
+                                    User didn't specify locking.
+                                */}
                                 {user ? (
-                                    <PerformanceForm festivalId={id} />
+                                    <div style={{ marginTop: '2rem' }}>
+                                        <PerformanceForm festivalId={id} />
+                                    </div>
                                 ) : (
-                                    <div style={{ padding: '1rem', background: '#222', textAlign: 'center' }}>
+                                    <div style={{ padding: '1rem', background: '#222', textAlign: 'center', marginTop: '2rem' }}>
                                         공연 정보를 추가하려면 <Link href="/login" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>로그인</Link>해주세요.
                                     </div>
                                 )}
@@ -130,9 +156,22 @@ export default async function FestivalDetailPage({ params }) {
                                 </div>
                             </>
                         )}
+
+                        {/* Post-Event Reviews (If Ended) */}
+                        {isEnded && (
+                            <div style={{ marginTop: '4rem', paddingTop: '4rem', borderTop: '1px solid var(--border)' }}>
+                                <FestivalReviewSection festivalId={id} user={user} />
+                            </div>
+                        )}
                     </div>
-                    {festival.type !== 'school' && (
-                        <div>
+
+                    {/* Sidebar */}
+                    <div>
+                        {/* Find a Friend - Hide if Ended? User didn't explicitly say hide, but "Find a Friend" implies future tense.
+                            However, user said: "Festival 탭 문구... 함께 갈 친구를 찾아보세요... 에 이미 끝난 페스티벌의 후기를 작성할 수 있음을 추가".
+                            This suggests distinction. Let's hide Find Friend if ended to clean up UI and focus on Reviews.
+                         */}
+                        {festival.type !== 'school' && !isEnded && (
                             <div style={{ background: '#151515', padding: '1.5rem', border: '1px solid var(--border)' }}>
                                 <h3 style={{ marginBottom: '0.5rem' }}>Find a Friend</h3>
                                 <p style={{ color: '#888', marginBottom: '1.5rem' }}>
@@ -148,8 +187,19 @@ export default async function FestivalDetailPage({ params }) {
                                     ))}
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* If Ended, maybe show a summary or nothing in sidebar? */}
+                        {isEnded && (
+                            <div style={{ background: '#151515', padding: '1.5rem', border: '1px solid var(--border)' }}>
+                                <h3 style={{ marginBottom: '0.5rem' }}>Event Ended</h3>
+                                <p style={{ color: '#888' }}>
+                                    이 이벤트는 종료되었습니다.<br />
+                                    참석하셨다면 후기를 남겨주세요!
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </section>
             </article>
         )

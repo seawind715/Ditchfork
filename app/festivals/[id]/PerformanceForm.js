@@ -90,6 +90,7 @@ export default function PerformanceForm({ festivalId }) {
 
                 <div>
                     <label style={{ fontSize: '0.9rem', color: '#888' }}>공연 내용 (곡명 등)</label>
+                    <p style={{ fontSize: '0.8rem', color: '#aaa', marginBottom: '0.5rem' }}>비워두면 "Secret!"으로 표시됩니다.</p>
                     <textarea name="content" rows={2} placeholder="예: 1. 데이식스 - 한 페이지가 될 수 있게" style={{ width: '100%', padding: '0.5rem' }}></textarea>
                 </div>
 

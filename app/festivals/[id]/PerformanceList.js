@@ -139,7 +139,18 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                 {perf.artist}
                             </div>
                             <div style={{ color: '#ccc', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                                {perf.content}
+                                {perf.content ? perf.content : (
+                                    <span style={{
+                                        color: '#666',
+                                        fontStyle: 'italic',
+                                        fontWeight: 700,
+                                        fontSize: '1.2rem',
+                                        letterSpacing: '2px',
+                                        textShadow: '0 0 10px rgba(255,255,255,0.1)'
+                                    }}>
+                                        Secret! 🤫
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
