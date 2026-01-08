@@ -260,7 +260,11 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                     <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>{perf.artist}</h4>
                                                                 </div>
                                                                 <div style={{ color: '#ccc', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
-                                                                    {perf.is_secret ? <span style={{ color: '#666', fontWeight: 700, fontStyle: 'italic' }}>Secret! 🤫</span> : perf.content}
+                                                                    {perf.is_secret ? (
+                                                                        <span style={{ color: '#666', fontWeight: 700, fontStyle: 'italic' }}>Secret! 🤫</span>
+                                                                    ) : (
+                                                                        perf.content || <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보를 추가해주세요!</span>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>

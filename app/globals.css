@@ -83,7 +83,7 @@
   --input: #1a1a1a;
 
   --font-sans: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-serif: 'Playfair Display', 'Apple SD Gothic Neo', serif;
 
   --radius: 0px;
   --container-width: 1000px;
