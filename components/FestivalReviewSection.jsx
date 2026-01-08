@@ -180,7 +180,7 @@ export default function FestivalReviewSection({ festivalId, user }) {
 
     return (
         <div style={{ marginTop: '2rem' }}>
-            <h3 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>Festival Reviews ({reviews.length}+)</h3>
+            <h3 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>Comments / Reviews ({reviews.length})</h3>
 
             {/* Write Review */}
             <div style={{ marginBottom: '3rem', background: '#222', padding: '1.5rem', borderRadius: '8px' }}>
@@ -188,7 +188,7 @@ export default function FestivalReviewSection({ festivalId, user }) {
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder={user ? "페스티벌 후기를 남겨주세요!" : "로그인 후 후기를 남길 수 있습니다."}
+                        placeholder={user ? "기대평이나 후기를 자유롭게 남겨주세요!" : "로그인 후 댓글을 남길 수 있습니다."}
                         disabled={!user || submitting}
                         rows={3}
                         style={{

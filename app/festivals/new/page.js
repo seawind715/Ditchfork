@@ -118,8 +118,8 @@ export default function NewFestivalPage() {
                         <label>개최 장소</label>
                         {isSchool ? (
                             <div style={{ padding: '0.8rem', background: '#222', color: '#aaa', borderRadius: '4px', border: '1px solid #333' }}>
-                                동탄국제고등학교 (Global Hall)
-                                <input type="hidden" name="location" value="동탄국제고등학교 (Global Hall)" />
+                                동탄국제고등학교
+                                <input type="hidden" name="location" value="동탄국제고등학교" />
                             </div>
                         ) : (
                             <input name="location" required placeholder="예: 송도달빛축제공원" />

@@ -85,7 +85,7 @@ export default function PerformanceForm({ festivalId }) {
 
                 <div>
                     <label style={{ fontSize: '0.9rem', color: '#888' }}>출연자 (팀명)</label>
-                    <input name="artist" required placeholder="예: 밴드부" style={{ width: '100%', padding: '0.5rem' }} />
+                    <input name="artist" required placeholder="예: CLOUD9" style={{ width: '100%', padding: '0.5rem' }} />
                 </div>
 
                 <div>
