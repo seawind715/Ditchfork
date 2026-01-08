@@ -3,6 +3,7 @@ import NoticeSection from '@/components/NoticeSection'
 import Footer from '@/components/Footer'
 import ScoreGuide from '@/components/ScoreGuide'
 import ReviewCard from '@/components/ReviewCard'
+import FestivalCard from '@/components/FestivalCard'
 import { createClient } from '@/utils/supabase/server'
 import { groupReviews } from '@/utils/reviewAggregation'
 
@@ -17,6 +18,13 @@ export default async function Home() {
       </main>
     )
   }
+
+  // Date calculation for Festivals
+  const now = new Date() // Server time
+  const sevenDaysAgo = new Date(now)
+  sevenDaysAgo.setDate(now.getDate() - 7)
+  const sevenDaysFuture = new Date(now)
+  sevenDaysFuture.setDate(now.getDate() + 7)
 
   let results: any[] = []
   try {
@@ -54,7 +62,14 @@ export default async function Home() {
         .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(5),
-      supabase.auth.getUser()
+      supabase.auth.getUser(),
+      supabase
+        .from('festivals')
+        .select('*')
+        .gte('start_date', sevenDaysAgo.toISOString())
+        .lte('start_date', sevenDaysFuture.toISOString())
+        .order('start_date', { ascending: true })
+        .limit(10)
     ])
   } catch (err) {
     console.error("Data fetching error:", err)
@@ -71,6 +86,7 @@ export default async function Home() {
   const allRawReviews = results[2]?.data || []
   const notices = results[3]?.data || []
   const user = results[4]?.data?.user || null
+  const upcomingFestivals = results[5]?.data || []
 
   // Aggregation
   const groupedReviews = groupReviews(allRawReviews)
@@ -101,10 +117,10 @@ export default async function Home() {
         </div>
       )}
 
-      {/* New Review Section */}
+      {/* New Album Review Section */}
       <section className="section container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
-          <h2 style={{ marginBottom: 0 }}>New Review</h2>
+          <h2 style={{ marginBottom: 0 }}>New Album Review</h2>
           <a href="/reviews" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
         </div>
 
@@ -122,6 +138,29 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* New Festival Section */}
+      <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
+          <h2 style={{ marginBottom: 0 }}>New Festival</h2>
+          <a href="/festivals" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
+        </div>
+
+        <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
+          {upcomingFestivals.length > 0 ? (
+            upcomingFestivals.map((festival: any) => (
+              <div key={festival.id} style={{ width: '300px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+                <FestivalCard festival={festival} userEmail={user?.email} />
+              </div>
+            ))
+          ) : (
+            <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+              <p style={{ color: '#666' }}>이번 주 예정된 페스티벌이 없습니다.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
 
       {/* New Release Section */}
       <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
