@@ -149,7 +149,7 @@ export default async function Home() {
         <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
           {upcomingFestivals.length > 0 ? (
             upcomingFestivals.map((festival: any) => (
-              <div key={festival.id} style={{ width: '300px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+              <div key={festival.id} className="festival-carousel-card" style={{ width: '320px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
                 <FestivalCard festival={festival} userEmail={user?.email} />
               </div>
             ))
