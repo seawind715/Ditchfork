@@ -242,10 +242,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                 <datalist id="sec-opts"><option value="1부" /><option value="2부" /></datalist>
                                                                 <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="Artist" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
                                                             </div>
-                                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                                <input type="checkbox" name="is_secret" checked={editForm.is_secret || false} onChange={handleEditChange} id={`edit-sec-${perf.id}`} />
-                                                                <label htmlFor={`edit-sec-${perf.id}`} style={{ marginLeft: '5px', fontSize: '0.8rem', color: '#ccc' }}>Secret</label>
-                                                            </div>
+
                                                             <textarea name="content" value={editForm.content || ''} onChange={handleEditChange} rows={2} style={{ width: '100%', padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} />
                                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                                                                 <button onClick={saveEdit} className="btn" style={{ fontSize: '0.8rem', padding: '0.2rem 0.6rem' }}>Save</button>
@@ -256,7 +253,11 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                                             <div>
                                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-                                                                    <span style={{ fontSize: '0.7rem', background: '#333', padding: '0.1rem 0.4rem', borderRadius: '3px', color: '#aaa' }}>{perf.genre}</span>
+                                                                    <div style={{ width: '50px', display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
+                                                                        {(perf.genre ? perf.genre.split(',').map(g => g.trim()) : []).map((g, i) => (
+                                                                            <span key={i} style={{ fontSize: '0.7rem', background: '#333', padding: '0.1rem 0', width: '100%', textAlign: 'center', borderRadius: '3px', color: '#aaa', display: 'block' }}>{g}</span>
+                                                                        ))}
+                                                                    </div>
                                                                     <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>{perf.artist}</h4>
                                                                 </div>
                                                                 <div style={{ color: '#ccc', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
