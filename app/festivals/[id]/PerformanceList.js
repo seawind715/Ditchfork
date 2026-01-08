@@ -130,11 +130,12 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
         const { error } = await supabase
             .from('festival_performances')
             .update({
-                name: editForm.name,
+                // name removed
                 artist: editForm.artist,
                 content: editForm.content,
                 genre: editForm.genre,
-                section: editForm.section
+                section: editForm.section,
+                is_secret: editForm.is_secret
             })
             .eq('id', editingId)
 
@@ -233,10 +234,21 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                     <option value="Gag">개그</option>
                                                     <option value="Other">기타</option>
                                                 </select>
-                                                <input name="name" value={editForm.name || ''} onChange={handleEditChange} placeholder="공연명" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} />
+                                                <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="아티스트" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
                                             </div>
-                                            <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="아티스트" style={{ padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
-                                            <textarea name="content" value={editForm.content || ''} onChange={handleEditChange} rows={3} placeholder="내용 (비워두면 Secret)" style={{ padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} />
+                                            {/* Secret Checkbox in Edit Mode */}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.5rem 0' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    name="is_secret"
+                                                    id={`edit-secret-${perf.id}`}
+                                                    checked={editForm.is_secret || false}
+                                                    onChange={(e) => setEditForm({ ...editForm, is_secret: e.target.checked })}
+                                                    style={{ width: 'auto', margin: 0 }}
+                                                />
+                                                <label htmlFor={`edit-secret-${perf.id}`} style={{ fontSize: '0.9rem', color: '#ccc' }}>Secret 모드</label>
+                                            </div>
+                                            <textarea name="content" value={editForm.content || ''} onChange={handleEditChange} rows={3} placeholder="공연 내용 입력" style={{ padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} />
                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                                                 <button onClick={saveEdit} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.8rem' }}>저장</button>
                                                 <button onClick={cancelEdit} className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.3rem 0.8rem', border: '1px solid #555' }}>취소</button>
@@ -244,13 +256,13 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                         </div>
                                     ) : (
                                         <>
-                                            {/* ... similar display ... */}
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                                                     <span style={{ fontSize: '0.8rem', background: '#333', padding: '0.2rem 0.6rem', borderRadius: '4px', color: '#ccc' }}>
                                                         {perf.genre || '장르 미정'}
                                                     </span>
-                                                    <h4 style={{ fontSize: '1.3rem', margin: 0 }}>{perf.name || '공연명 없음'}</h4>
+                                                    {/* Changed from Name to Artist as per user request */}
+                                                    <h4 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 800 }}>{perf.artist}</h4>
                                                 </div>
                                                 {/* Action Buttons */}
                                                 <div style={{ display: 'flex', gap: '0.5rem', opacity: 0.5 }} className="hover-opacity-100">
@@ -258,11 +270,9 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                     <button onClick={() => handleDelete(perf.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888' }}>🗑️</button>
                                                 </div>
                                             </div>
-                                            <div style={{ fontSize: '1.1rem', color: 'var(--primary)', fontWeight: 600, marginBottom: '0.5rem' }}>
-                                                {perf.artist}
-                                            </div>
-                                            <div style={{ color: '#ccc', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                                                {perf.content ? perf.content : (
+
+                                            <div style={{ color: '#ccc', whiteSpace: 'pre-wrap', lineHeight: 1.6, marginTop: '0.5rem' }}>
+                                                {perf.is_secret ? (
                                                     <span style={{
                                                         color: '#666',
                                                         fontStyle: 'italic',
@@ -273,6 +283,8 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                     }}>
                                                         Secret! 🤫
                                                     </span>
+                                                ) : (
+                                                    perf.content || <span style={{ color: '#555', fontSize: '0.9rem' }}>공연 내용이 없습니다. 정보를 추가해주세요!</span>
                                                 )}
                                             </div>
                                         </>

@@ -18,11 +18,11 @@ export default function PerformanceForm({ festivalId }) {
             festival_id: festivalId,
             // order_index: Will be calculated in SQL or fetched before insert.
             // Let's fetch the current max order first.
-            name: form.name.value,
             artist: form.artist.value,
             content: form.content.value,
             genre: form.genre.value,
-            section: form.section.value || '1부' // Default to 1부
+            section: form.section.value || '1부',
+            is_secret: form.is_secret.checked
         }
 
         // Get current user
@@ -92,23 +92,21 @@ export default function PerformanceForm({ festivalId }) {
                 </div>
 
                 <div>
-                    <label style={{ fontSize: '0.9rem', color: '#888' }}>공연명 (선택)</label>
-                    <input name="name" placeholder="예: 오프닝 공연" style={{ width: '100%', padding: '0.5rem' }} />
+                    <label style={{ fontSize: '0.9rem', color: '#888' }}>출연자 / 팀명 (Artist)</label>
+                    <input name="artist" required placeholder="예: CLOUD9" style={{ width: '100%', padding: '0.5rem', fontWeight: 'bold' }} />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <input type="checkbox" name="is_secret" id="is_secret" style={{ width: 'auto', marginBottom: 0 }} />
+                    <label htmlFor="is_secret" style={{ cursor: 'pointer', selectNone: 'none' }}>비밀(Secret) 공연으로 설정하기</label>
                 </div>
 
                 <div>
-                    <label style={{ fontSize: '0.9rem', color: '#888' }}>출연자 (팀명)</label>
-                    <input name="artist" required placeholder="예: CLOUD9" style={{ width: '100%', padding: '0.5rem' }} />
+                    <textarea name="content" rows={3} placeholder="공연 내용을 입력해주세요. (곡 목록, 멤버 소개 등)" style={{ width: '100%', padding: '0.5rem' }} />
                 </div>
 
-                <div>
-                    <label style={{ fontSize: '0.9rem', color: '#888' }}>공연 내용 (곡명 등)</label>
-                    <p style={{ fontSize: '0.8rem', color: '#aaa', marginBottom: '0.5rem' }}>비워두면 "Secret!"으로 표시됩니다.</p>
-                    <textarea name="content" rows={2} placeholder="예: 1. 데이식스 - 한 페이지가 될 수 있게" style={{ width: '100%', padding: '0.5rem' }}></textarea>
-                </div>
-
-                <button type="submit" className="btn" disabled={loading} style={{ width: '100%' }}>
-                    {loading ? 'Adding...' : 'Add Performance'}
+                <button type="submit" disabled={loading} className="btn" style={{ width: '100%' }}>
+                    {loading ? '등록 중...' : '공연 정보 추가'}
                 </button>
             </form>
         </div>
