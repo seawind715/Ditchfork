@@ -41,25 +41,17 @@ export default function FestivalCard({ festival, userEmail }) {
     const typeLabel = festival.type === 'school' ? '교내' : '교외'
 
     return (
-        <Link href={`/festivals/${festival.id}`} className="card" style={{ display: 'flex', textDecoration: 'none', height: '180px' }}>
+        <Link href={`/festivals/${festival.id}`} className="card festival-card">
             {/* Date Section (Left) */}
-            <div style={{
-                width: '100px',
-                background: status === 'ONGOING' ? 'var(--accent)' : (status === 'ENDED' ? '#333' : 'var(--primary)'),
-                color: 'white',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1rem',
-                textAlign: 'center'
+            <div className="festival-card-date" style={{
+                background: status === 'ONGOING' ? 'var(--accent)' : (status === 'ENDED' ? '#333' : 'var(--primary)')
             }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>{status}</div>
                 <div style={{ fontSize: '1.5rem', fontWeight: 900, margin: '0.2rem 0' }}>{dDay}</div>
             </div>
 
             {/* Info Section */}
-            <div className="card-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className="festival-card-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ color: '#888', fontSize: '0.9rem', marginBottom: '0.2rem' }}>
                         {dateStr} @ {festival.location}
@@ -80,15 +72,7 @@ export default function FestivalCard({ festival, userEmail }) {
             </div>
 
             {/* Action Section (Right) */}
-            <div style={{
-                width: '120px',
-                borderLeft: '1px dashed var(--border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                gap: '0.5rem'
-            }}>
+            <div className="festival-card-action">
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>View Info</span>
                 <span style={{ fontSize: '1.2rem' }}>→</span>
                 <AdminDeleteButton table="festivals" id={festival.id} redirectTo="/festivals" userEmail={userEmail} />

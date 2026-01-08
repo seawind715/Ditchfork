@@ -21,7 +21,8 @@ export default function PerformanceForm({ festivalId }) {
             name: form.name.value,
             artist: form.artist.value,
             content: form.content.value,
-            genre: form.genre.value
+            genre: form.genre.value,
+            section: form.section.value || '1부' // Default to 1부
         }
 
         // Get current user
@@ -76,6 +77,18 @@ export default function PerformanceForm({ festivalId }) {
                             <option value="Other">기타 (Other)</option>
                         </select>
                     </div>
+                </div>
+
+                <div>
+                    <label style={{ fontSize: '0.9rem', color: '#888' }}>공연 부 (Section) (선택)</label>
+                    <input name="section" placeholder="예: 1부, 2부, 오프닝..." defaultValue="1부" list="section-options" style={{ width: '100%', padding: '0.5rem' }} />
+                    <datalist id="section-options">
+                        <option value="1부" />
+                        <option value="2부" />
+                        <option value="3부" />
+                        <option value="오프닝" />
+                        <option value="피날레" />
+                    </datalist>
                 </div>
 
                 <div>

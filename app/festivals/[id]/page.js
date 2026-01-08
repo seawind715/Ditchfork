@@ -157,10 +157,12 @@ export default async function FestivalDetailPage({ params }) {
                             </>
                         )}
 
-                        {/* Event Reviews / Comments */}
-                        <div style={{ marginTop: '4rem', paddingTop: '4rem', borderTop: '1px solid var(--border)' }}>
-                            <FestivalReviewSection festivalId={id} user={user} />
-                        </div>
+                        {/* Event Reviews (Only if Started or Ended) */}
+                        {isStarted && (
+                            <div style={{ marginTop: '4rem', paddingTop: '4rem', borderTop: '1px solid var(--border)' }}>
+                                <FestivalReviewSection festivalId={id} user={user} />
+                            </div>
+                        )}
                     </div>
 
                     {/* Sidebar */}
