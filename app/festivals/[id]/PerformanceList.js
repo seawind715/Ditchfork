@@ -313,7 +313,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                         {perf.is_secret ? (
                                                                             <span style={{ color: '#666', fontWeight: 700, fontStyle: 'italic' }}>Secret! 🤫</span>
                                                                         ) : (
-                                                                            perf.content || <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보를 추가해주세요!</span>
+                                                                            perf.content || (!perf.image_url && <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보와 사진을 추가해주세요!</span>)
                                                                         )}
                                                                     </div>
                                                                 </div>
