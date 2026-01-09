@@ -160,15 +160,30 @@ export default function FestivalHeader({ festival, user }) {
                         <div>
                             <label style={{ display: 'block', color: 'var(--primary)', marginBottom: '0.5rem', fontWeight: 'bold' }}>📅 시작 날짜 & 시간</label>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                <input type="date" name="start_date_d" value={formData.start_date_d} onChange={handleChange} required style={{ flex: 3 }} />
-                                <input type="time" name="start_date_t" value={formData.start_date_t} onChange={handleChange} required style={{ flex: 2 }} />
+                                <input
+                                    type="date"
+                                    name="start_date_d"
+                                    value={formData.start_date_d}
+                                    onChange={handleChange}
+                                    required
+                                    style={{ flex: 3, cursor: 'pointer' }}
+                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                />
+                                <input type="time" name="start_date_t" value={formData.start_date_t} onChange={handleChange} required style={{ flex: 2, cursor: 'pointer' }} onClick={(e) => e.target.showPicker && e.target.showPicker()} />
                             </div>
                         </div>
                         <div>
                             <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>종료 날짜 & 시간 (선택)</label>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                <input type="date" name="end_date_d" value={formData.end_date_d} onChange={handleChange} style={{ flex: 3 }} />
-                                <input type="time" name="end_date_t" value={formData.end_date_t} onChange={handleChange} style={{ flex: 2 }} />
+                                <input
+                                    type="date"
+                                    name="end_date_d"
+                                    value={formData.end_date_d}
+                                    onChange={handleChange}
+                                    style={{ flex: 3, cursor: 'pointer' }}
+                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                />
+                                <input type="time" name="end_date_t" value={formData.end_date_t} onChange={handleChange} style={{ flex: 2, cursor: 'pointer' }} onClick={(e) => e.target.showPicker && e.target.showPicker()} />
                             </div>
                         </div>
                     </div>

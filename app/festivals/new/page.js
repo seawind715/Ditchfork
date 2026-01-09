@@ -136,7 +136,7 @@ export default function NewFestivalPage() {
                         {/* Start Time is now available for BOTH types */}
                         <div style={{ marginTop: '0.5rem' }}>
                             <label style={{ fontSize: '0.9rem', color: '#888', marginBottom: '0.2rem', display: 'block' }}>시작 시간:</label>
-                            <input name="start_time" type="time" required style={{ width: '100%' }} />
+                            <input name="start_time" type="time" required style={{ width: '100%', cursor: 'pointer' }} onClick={(e) => e.target.showPicker && e.target.showPicker()} />
                         </div>
                     </div>
                 </div>
