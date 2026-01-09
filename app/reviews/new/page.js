@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toTitleCase } from '@/utils/format'
+import ScoreGuide from '@/components/ScoreGuide'
 
 export default function NewReviewPage() {
     const router = useRouter()
@@ -609,6 +610,12 @@ export default function NewReviewPage() {
                     <div>
                         <label>평점 (0.0 ~ 10.0) *</label>
                         <input name="rating" type="number" step="0.1" min="0" max="10" required placeholder="6.5" />
+                        <details style={{ marginTop: '0.5rem', cursor: 'pointer' }}>
+                            <summary style={{ fontSize: '0.8rem', color: '#888', userSelect: 'none' }}>평점 가이드 보기</summary>
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <ScoreGuide compact={true} />
+                            </div>
+                        </details>
                     </div>
                 </div>
 

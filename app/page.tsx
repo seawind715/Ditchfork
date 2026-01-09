@@ -109,7 +109,6 @@ export default async function Home() {
     <main>
       <Hero initialData={heroData || defaultHero} user={user} />
       <NoticeSection notices={notices} user={user} />
-      <ScoreGuide />
 
       {!user && (
         <div style={{ background: '#111', color: '#888', textAlign: 'center', padding: '1rem', borderBottom: '1px solid #222' }}>
@@ -117,30 +116,8 @@ export default async function Home() {
         </div>
       )}
 
-      {/* New Album Review Section */}
-      <section className="section container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
-          <h2 style={{ marginBottom: 0 }}>New Album Review</h2>
-          <a href="/reviews" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
-        </div>
-
-        <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
-          {newReviews.length > 0 ? (
-            newReviews.map((review: any) => (
-              <div key={review.id} style={{ width: '220px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
-                <ReviewCard review={review} />
-              </div>
-            ))
-          ) : (
-            <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
-              <p style={{ color: '#666' }}>최근 등록된 리뷰가 없습니다.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* New Festival Section */}
-      <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
+      <section className="section container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
           <h2 style={{ marginBottom: 0 }}>New Festival</h2>
           <a href="/festivals" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
@@ -156,6 +133,28 @@ export default async function Home() {
           ) : (
             <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
               <p style={{ color: '#666' }}>이번 주 예정된 페스티벌이 없습니다.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* New Album Review Section */}
+      <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
+          <h2 style={{ marginBottom: 0 }}>New Album Review</h2>
+          <a href="/reviews" className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}>전체 보기</a>
+        </div>
+
+        <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
+          {newReviews.length > 0 ? (
+            newReviews.map((review: any) => (
+              <div key={review.id} style={{ width: '220px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+                <ReviewCard review={review} />
+              </div>
+            ))
+          ) : (
+            <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+              <p style={{ color: '#666' }}>최근 등록된 리뷰가 없습니다.</p>
             </div>
           )}
         </div>

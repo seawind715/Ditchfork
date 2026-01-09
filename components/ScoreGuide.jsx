@@ -1,6 +1,6 @@
 'use client'
 
-export default function ScoreGuide() {
+export default function ScoreGuide({ compact = false }) {
     const scores = [
         { val: 10, label: "시대를 초월한 명반" },
         { val: 9, label: "장르를 대표하는 명반" },
@@ -15,6 +15,47 @@ export default function ScoreGuide() {
         { val: 0, label: "음악으로 볼 수 없는 앨범" }
     ]
 
+    const content = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: compact ? '0.2rem' : '0.4rem' }}>
+            {scores.map((s, idx) => (
+                <div key={s.val} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1.2rem',
+                    padding: compact ? '0.3rem 0.8rem' : '0.5rem 1.2rem',
+                    background: idx === 0 ? 'rgba(255,0,0,0.05)' : 'rgba(255,255,255,0.02)',
+                    border: `1px solid ${idx === 0 ? 'var(--primary)' : '#222'}`,
+                    borderRadius: '4px'
+                }}>
+                    <div style={{
+                        fontSize: compact ? '1rem' : '1.2rem',
+                        fontWeight: 900,
+                        color: s.val >= 8 ? 'var(--primary)' : s.val >= 6 ? '#fff' : '#666',
+                        width: '30px',
+                        textAlign: 'center'
+                    }}>
+                        {s.val}
+                    </div>
+                    <div style={{
+                        fontSize: compact ? '0.8rem' : '0.9rem',
+                        color: s.val >= 8 ? '#fff' : '#ccc',
+                        fontWeight: s.val >= 8 ? 700 : 400
+                    }}>
+                        {s.label}
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+
+    if (compact) {
+        return (
+            <div style={{ padding: '0.5rem', background: '#111', borderRadius: '4px', border: '1px solid #222' }}>
+                {content}
+            </div>
+        )
+    }
+
     return (
         <section className="section" style={{ background: '#050505', borderTop: '1px solid #111', borderBottom: '1px solid #111', padding: '3rem 0' }}>
             <div className="container" style={{ maxWidth: '600px' }}>
@@ -24,36 +65,7 @@ export default function ScoreGuide() {
                     </span>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    {scores.map((s, idx) => (
-                        <div key={s.val} style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '1.2rem',
-                            padding: '0.5rem 1.2rem',
-                            background: idx === 0 ? 'rgba(255,0,0,0.05)' : 'rgba(255,255,255,0.02)',
-                            border: `1px solid ${idx === 0 ? 'var(--primary)' : '#222'}`,
-                            borderRadius: '4px'
-                        }}>
-                            <div style={{
-                                fontSize: '1.2rem',
-                                fontWeight: 900,
-                                color: s.val >= 8 ? 'var(--primary)' : s.val >= 6 ? '#fff' : '#666',
-                                width: '30px',
-                                textAlign: 'center'
-                            }}>
-                                {s.val}
-                            </div>
-                            <div style={{
-                                fontSize: '0.9rem',
-                                color: s.val >= 8 ? '#fff' : '#ccc',
-                                fontWeight: s.val >= 8 ? 700 : 400
-                            }}>
-                                {s.label}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {content}
 
                 <div style={{ marginTop: '3rem', textAlign: 'center', color: '#555', fontSize: '0.85rem' }}>
                     * 모든 평점은 주관적이며, Ditchfork 비평가들의 심도 있는 청취를 바탕으로 정해집니다.
