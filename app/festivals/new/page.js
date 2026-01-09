@@ -24,11 +24,10 @@ export default function NewFestivalPage() {
         const formData = new FormData(e.target)
 
         // Combine Date and Time inputs
+        // Combine Date and Time inputs
         const startDay = formData.get('start_day')
-        // Start time is now used for both school and external
-        const startHour = formData.get('start_hour')
-        const startMinute = formData.get('start_minute')
-        const startDateISO = `${startDay}T${startHour}:${startMinute}:00`
+        const startTime = formData.get('start_time')
+        const startDateISO = `${startDay}T${startTime}:00`
 
         // End Date
         const endDay = formData.get('end_day')
@@ -135,14 +134,9 @@ export default function NewFestivalPage() {
                             onClick={(e) => e.target.showPicker && e.target.showPicker()}
                         />
                         {/* Start Time is now available for BOTH types */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                            <label style={{ fontSize: '0.9rem', color: '#888', margin: 0 }}>시작 시간:</label>
-                            <select name="start_hour" required style={{ marginBottom: 0, padding: '0.3rem', width: 'auto' }}>
-                                {hours.map(h => <option key={h} value={h}>{h}시</option>)}
-                            </select>
-                            <select name="start_minute" required style={{ marginBottom: 0, padding: '0.3rem', width: 'auto' }}>
-                                {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
-                            </select>
+                        <div style={{ marginTop: '0.5rem' }}>
+                            <label style={{ fontSize: '0.9rem', color: '#888', marginBottom: '0.2rem', display: 'block' }}>시작 시간:</label>
+                            <input name="start_time" type="time" required style={{ width: '100%' }} />
                         </div>
                     </div>
                 </div>
