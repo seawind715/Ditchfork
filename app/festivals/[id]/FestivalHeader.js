@@ -64,11 +64,18 @@ export default function FestivalHeader({ festival, user }) {
             return
         }
 
-        // Combine to ISO UTC
+        // Combine to ISO UTC with explicit setters for safety
         const combineToISO = (datePart, timePart) => {
             if (!datePart || !timePart) return null
-            const localDate = new Date(`${datePart}T${timePart}:00`) // e.g. 2026-05-02T14:30:00 (Local context)
+            // datePart is "YYYY-MM-DD"
+            const [y, m, d] = datePart.split('-').map(Number)
+            // timePart is "HH:mm"
+            const [h, min] = timePart.split(':').map(Number)
+
+            // Create Local Date
+            const localDate = new Date(y, m - 1, d, h, min, 0)
             if (isNaN(localDate.getTime())) return null
+
             return localDate.toISOString()
         }
 
@@ -151,14 +158,14 @@ export default function FestivalHeader({ festival, user }) {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div>
-                            <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>시작 일시 * (필수)</label>
+                            <label style={{ display: 'block', color: 'var(--primary)', marginBottom: '0.5rem', fontWeight: 'bold' }}>📅 시작 날짜 & 시간</label>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <input type="date" name="start_date_d" value={formData.start_date_d} onChange={handleChange} required style={{ flex: 3 }} />
                                 <input type="time" name="start_date_t" value={formData.start_date_t} onChange={handleChange} required style={{ flex: 2 }} />
                             </div>
                         </div>
                         <div>
-                            <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>종료 날짜 (선택)</label>
+                            <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>종료 날짜 & 시간 (선택)</label>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <input type="date" name="end_date_d" value={formData.end_date_d} onChange={handleChange} style={{ flex: 3 }} />
                                 <input type="time" name="end_date_t" value={formData.end_date_t} onChange={handleChange} style={{ flex: 2 }} />
