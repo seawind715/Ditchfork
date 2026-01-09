@@ -11,32 +11,42 @@ export default function FestivalHeader({ festival, user }) {
     const supabase = createClient()
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    // Helper for Local Time String (YYYY-MM-DDTHH:mm)
-    // toISOString() returns UTC. We want Local for the input.
-    const toLocalISOString = (dateStr) => {
-        if (!dateStr) return ''
-        const date = new Date(dateStr)
-        if (isNaN(date.getTime())) return ''
+    // Split initialization logic
+    const splitDateTime = (isoString) => {
+        if (!isoString) return { date: '', time: '' }
+        const d = new Date(isoString)
+        if (isNaN(d.getTime())) return { date: '', time: '' }
 
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const day = String(date.getDate()).padStart(2, '0')
-        const hours = String(date.getHours()).padStart(2, '0')
-        const minutes = String(date.getMinutes()).padStart(2, '0')
+        // Use local parts manually
+        const year = d.getFullYear()
+        const month = String(d.getMonth() + 1).padStart(2, '0')
+        const day = String(d.getDate()).padStart(2, '0')
+        const hours = String(d.getHours()).padStart(2, '0')
+        const minutes = String(d.getMinutes()).padStart(2, '0')
 
-        return `${year}-${month}-${day}T${hours}:${minutes}`
+        return {
+            date: `${year}-${month}-${day}`,
+            time: `${hours}:${minutes}`
+        }
     }
+
+    const startSplit = splitDateTime(festival.start_date)
+    const endSplit = splitDateTime(festival.end_date)
 
     const [formData, setFormData] = useState({
         name: festival.name,
-        start_date: toLocalISOString(festival.start_date),
-        end_date: toLocalISOString(festival.end_date),
+        // Separate fields for inputs
+        start_date_d: startSplit.date,
+        start_date_t: startSplit.time,
+        end_date_d: endSplit.date,
+        end_date_t: endSplit.time,
+
         location: festival.location,
         image_url: festival.image_url || '',
         ticket_url: festival.ticket_url || '',
         ticket_price: festival.ticket_price || '',
         description: festival.description || '',
-        lineup: festival.lineup || '' // For non-school type mainly
+        lineup: festival.lineup || ''
     })
 
     const handleChange = (e) => {
@@ -47,13 +57,31 @@ export default function FestivalHeader({ festival, user }) {
         e.preventDefault()
         setIsLoading(true)
 
-        // Convert empty strings to null for dates/urls if needed? 
-        // Supabase handles date parsing, but empty string might error.
-        // formData dates are Local. Convert to UTC ISO for DB.
+        // Check required
+        if (!formData.start_date_d || !formData.start_date_t) {
+            alert('시작 날짜와 시간을 모두 입력해주세요.')
+            setIsLoading(false)
+            return
+        }
+
+        // Combine to ISO UTC
+        const combineToISO = (datePart, timePart) => {
+            if (!datePart || !timePart) return null
+            const localDate = new Date(`${datePart}T${timePart}:00`) // e.g. 2026-05-02T14:30:00 (Local context)
+            if (isNaN(localDate.getTime())) return null
+            return localDate.toISOString()
+        }
+
         const updateData = {
-            ...formData,
-            start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
-            end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null
+            name: formData.name,
+            location: formData.location,
+            image_url: formData.image_url,
+            ticket_url: formData.ticket_url,
+            ticket_price: formData.ticket_price,
+            description: formData.description,
+            lineup: formData.lineup,
+            start_date: combineToISO(formData.start_date_d, formData.start_date_t),
+            end_date: combineToISO(formData.end_date_d, formData.end_date_t)
         }
 
         const { error } = await supabase
@@ -123,12 +151,18 @@ export default function FestivalHeader({ festival, user }) {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div>
-                            <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>시작 일시</label>
-                            <input type="datetime-local" name="start_date" value={formData.start_date} onChange={handleChange} required />
+                            <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>시작 일시 * (필수)</label>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input type="date" name="start_date_d" value={formData.start_date_d} onChange={handleChange} required style={{ flex: 3 }} />
+                                <input type="time" name="start_date_t" value={formData.start_date_t} onChange={handleChange} required style={{ flex: 2 }} />
+                            </div>
                         </div>
                         <div>
                             <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>종료 날짜 (선택)</label>
-                            <input type="datetime-local" name="end_date" value={formData.end_date} onChange={handleChange} />
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input type="date" name="end_date_d" value={formData.end_date_d} onChange={handleChange} style={{ flex: 3 }} />
+                                <input type="time" name="end_date_t" value={formData.end_date_t} onChange={handleChange} style={{ flex: 2 }} />
+                            </div>
                         </div>
                     </div>
 
