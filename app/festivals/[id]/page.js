@@ -5,6 +5,7 @@ import ParticipantForm from './ParticipantForm'
 import PerformanceForm from './PerformanceForm'
 import PerformanceList from './PerformanceList'
 import AdminDeleteButton from '@/components/AdminDeleteButton'
+import FestivalHeader from './FestivalHeader'
 import FestivalReviewSection from '@/components/FestivalReviewSection' // New component
 
 export const revalidate = 0
@@ -99,22 +100,10 @@ export default async function FestivalDetailPage({ params }) {
         return (
             <article>
                 <section className="section" style={{ background: 'var(--secondary)', borderBottom: '1px solid var(--border)', padding: '3rem 0' }}>
-                    <div className="container">
-                        <Link href="/festivals" className="btn btn-outline" style={{ marginBottom: '2rem' }}>← 목록으로</Link>
-                        <h1 style={{ fontSize: '4rem', lineHeight: 1.1, marginBottom: '1rem' }}>{festival.name}</h1>
-                        <div style={{ fontSize: '1.5rem', color: '#888', marginBottom: '2rem' }}>
-                            {dateStr} <br />
-                            @ {festival.location}
-                        </div>
-                        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                            {festival.ticket_url && (
-                                <a href={festival.ticket_url} target="_blank" className="btn" style={{ padding: '1rem 2rem' }}>
-                                    티켓 예매하러 가기 ({festival.ticket_price || '가격 정보 없음'})
-                                </a>
-                            )}
-                            <AdminDeleteButton table="festivals" id={id} redirectTo="/festivals" userEmail={user?.email} />
-                        </div>
+                    <div className="container" style={{ marginBottom: '2rem' }}>
+                        <Link href="/festivals" className="btn btn-outline">← 목록으로</Link>
                     </div>
+                    <FestivalHeader festival={festival} user={user} />
                 </section>
 
                 <section className="container section grid" style={{ gridTemplateColumns: '2fr 1fr', gap: '4rem' }}>

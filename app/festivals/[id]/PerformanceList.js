@@ -11,7 +11,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
     const [editForm, setEditForm] = useState({})
 
     // Collapsed sections state
-    const [collapsedSections, setCollapsedSections] = useState({})
+    const [expandedSections, setExpandedSections] = useState({})
 
     const supabase = createClient()
     const router = useRouter()
@@ -42,7 +42,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
     })
 
     const toggleSection = (name) => {
-        setCollapsedSections(prev => ({ ...prev, [name]: !prev[name] }))
+        setExpandedSections(prev => ({ ...prev, [name]: !prev[name] }))
     }
 
     // --- Actions ---
@@ -56,7 +56,8 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
             artist: p.artist,
             content: p.content,
             genre: p.genre,
-            is_secret: p.is_secret
+            is_secret: p.is_secret,
+            image_url: p.image_url
         }))
         const { error } = await supabase.from('festival_performances').upsert(upsertData)
         if (error) console.error('Persist error:', error)
@@ -122,6 +123,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
             content: perf.content,
             genre: perf.genre,
             section: perf.section,
+            image_url: perf.image_url || '',
             is_secret: perf.is_secret
         })
     }
@@ -179,14 +181,14 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                 </div>
             ) : (
                 sections.map((section, secIndex) => {
-                    const isCollapsed = collapsedSections[section.name]
+                    const isExpanded = expandedSections[section.name]
                     return (
                         <div key={section.name} style={{ background: '#111', borderRadius: '8px', overflow: 'hidden', border: '1px solid #333' }}>
                             <div
                                 style={{
                                     padding: '1rem 1.5rem',
                                     background: '#1a1a1a',
-                                    borderBottom: isCollapsed ? 'none' : '1px solid #333',
+                                    borderBottom: isExpanded ? '1px solid #333' : 'none',
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
@@ -195,7 +197,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                 onClick={() => toggleSection(section.name)}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{isCollapsed ? '▶' : '▼'}</span>
+                                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{isExpanded ? '▼' : '▶'}</span>
                                     <h3 style={{ margin: 0, fontSize: '1.3rem', color: 'var(--primary)' }}>{section.name}</h3>
                                     <span style={{ fontSize: '0.9rem', color: '#666' }}>({section.items.length})</span>
                                 </div>
@@ -207,7 +209,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                 )}
                             </div>
 
-                            {!isCollapsed && (
+                            {isExpanded && (
                                 <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                     {section.items.map((perf, index) => {
                                         const isEditing = editingId === perf.id
@@ -243,7 +245,8 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                 <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="Artist" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
                                                             </div>
 
-                                                            <textarea name="content" value={editForm.content || ''} onChange={handleEditChange} rows={2} style={{ width: '100%', padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} />
+                                                            <input name="image_url" value={editForm.image_url || ''} onChange={handleEditChange} placeholder="Image URL (http://...)" style={{ width: '100%', padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontSize: '0.8rem', marginTop: '0.5rem' }} />
+                                                            <textarea name="content" value={editForm.content || ''} onChange={handleEditChange} rows={2} style={{ width: '100%', padding: '0.3rem', background: '#333', color: 'white', border: 'none', marginTop: '0.5rem' }} />
                                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                                                                 <button onClick={saveEdit} className="btn" style={{ fontSize: '0.8rem', padding: '0.2rem 0.6rem' }}>Save</button>
                                                                 <button onClick={cancelEdit} className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.2rem 0.6rem' }}>Cancel</button>
@@ -251,21 +254,29 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                         </div>
                                                     ) : (
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                                            <div>
-                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-                                                                    <div style={{ width: '50px', display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
-                                                                        {(perf.genre ? perf.genre.split(',').map(g => g.trim()) : []).map((g, i) => (
-                                                                            <span key={i} style={{ fontSize: '0.7rem', background: '#333', padding: '0.1rem 0', width: '100%', textAlign: 'center', borderRadius: '3px', color: '#aaa', display: 'block' }}>{g}</span>
-                                                                        ))}
+                                                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                                                {/* Performance Image */}
+                                                                {perf.image_url && (
+                                                                    <div style={{ width: '80px', height: '80px', flexShrink: 0, borderRadius: '4px', overflow: 'hidden', border: '1px solid #333' }}>
+                                                                        <img src={perf.image_url} alt={perf.artist} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                                     </div>
-                                                                    <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>{perf.artist}</h4>
-                                                                </div>
-                                                                <div style={{ color: '#ccc', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
-                                                                    {perf.is_secret ? (
-                                                                        <span style={{ color: '#666', fontWeight: 700, fontStyle: 'italic' }}>Secret! 🤫</span>
-                                                                    ) : (
-                                                                        perf.content || <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보를 추가해주세요!</span>
-                                                                    )}
+                                                                )}
+                                                                <div>
+                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                                                                        <div style={{ width: '50px', display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
+                                                                            {(perf.genre ? perf.genre.split(',').map(g => g.trim()) : []).map((g, i) => (
+                                                                                <span key={i} style={{ fontSize: '0.7rem', background: '#333', padding: '0.1rem 0', width: '100%', textAlign: 'center', borderRadius: '3px', color: '#aaa', display: 'block' }}>{g}</span>
+                                                                            ))}
+                                                                        </div>
+                                                                        <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>{perf.artist}</h4>
+                                                                    </div>
+                                                                    <div style={{ color: '#ccc', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                                                                        {perf.is_secret ? (
+                                                                            <span style={{ color: '#666', fontWeight: 700, fontStyle: 'italic' }}>Secret! 🤫</span>
+                                                                        ) : (
+                                                                            perf.content || <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보를 추가해주세요!</span>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
