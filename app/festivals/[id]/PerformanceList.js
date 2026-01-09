@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/client'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { uploadImage } from '@/utils/imageUpload'
 
 export default function PerformanceList({ initialPerformances, festivalId, user }) {
     const [performances, setPerformances] = useState(initialPerformances)
@@ -138,6 +139,20 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
         setEditForm({ ...editForm, [e.target.name]: value })
     }
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        if (!confirm('이미지를 업로드하시겠습니까? (자동으로 압축되어 저장됩니다)')) return
+
+        try {
+            const publicUrl = await uploadImage(file, 'images')
+            setEditForm(prev => ({ ...prev, image_url: publicUrl }))
+        } catch (error) {
+            alert('이미지 업로드 실패: ' + error.message)
+        }
+    }
+
     const saveEdit = async () => {
         if (!editingId) return
 
@@ -245,7 +260,24 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                 <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="Artist" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
                                                             </div>
 
-                                                            <input name="image_url" value={editForm.image_url || ''} onChange={handleEditChange} placeholder="Image URL (http://...)" style={{ width: '100%', padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontSize: '0.8rem', marginTop: '0.5rem' }} />
+                                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+                                                                {editForm.image_url && <img src={editForm.image_url} alt="Preview" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />}
+                                                                <input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    onChange={handleImageUpload}
+                                                                    style={{
+                                                                        flex: 1,
+                                                                        background: '#333',
+                                                                        padding: '0.3rem',
+                                                                        fontSize: '0.8rem',
+                                                                        color: '#ccc',
+                                                                        border: 'none'
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <input name="image_url" type="hidden" value={editForm.image_url || ''} />
+
                                                             <textarea name="content" value={editForm.content || ''} onChange={handleEditChange} rows={2} style={{ width: '100%', padding: '0.3rem', background: '#333', color: 'white', border: 'none', marginTop: '0.5rem' }} />
                                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                                                                 <button onClick={saveEdit} className="btn" style={{ fontSize: '0.8rem', padding: '0.2rem 0.6rem' }}>Save</button>

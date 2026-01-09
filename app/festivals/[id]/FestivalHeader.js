@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import AdminDeleteButton from '@/components/AdminDeleteButton'
+import { uploadImage } from '@/utils/imageUpload'
 
 export default function FestivalHeader({ festival, user }) {
     const router = useRouter()
@@ -67,6 +68,24 @@ export default function FestivalHeader({ festival, user }) {
         dateStr = `${dateStr} ~ ${endDateStr}`
     }
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        if (!confirm('이미지를 업로드하시겠습니까? (자동으로 압축되어 저장됩니다)')) return
+
+        setIsLoading(true)
+        try {
+            const publicUrl = await uploadImage(file, 'images')
+            setFormData({ ...formData, image_url: publicUrl })
+            alert('이미지 업로드 완료!')
+        } catch (error) {
+            alert('이미지 업로드 실패: ' + error.message)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     if (isEditing) {
         return (
             <div className="container" style={{ padding: '2rem 0' }}>
@@ -96,9 +115,26 @@ export default function FestivalHeader({ festival, user }) {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>메인 이미지 URL</label>
-                        <input name="image_url" value={formData.image_url} onChange={handleChange} placeholder="https://..." />
-                        {formData.image_url && <img src={formData.image_url} alt="Preview" style={{ height: '100px', marginTop: '0.5rem', borderRadius: '4px' }} />}
+                        <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>메인 이미지</label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            {formData.image_url && <img src={formData.image_url} alt="Preview" style={{ height: '80px', borderRadius: '4px', border: '1px solid #444' }} />}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                style={{
+                                    background: '#333',
+                                    padding: '0.5rem',
+                                    borderRadius: '4px',
+                                    fontSize: '0.9rem',
+                                    color: '#ccc',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}
+                            />
+                        </div>
+                        <input name="image_url" type="hidden" value={formData.image_url} />
+                        <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.3rem' }}>* 이미지는 자동으로 압축(최적화)되어 업로드됩니다.</p>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
