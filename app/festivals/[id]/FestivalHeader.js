@@ -11,10 +11,21 @@ export default function FestivalHeader({ festival, user }) {
     const supabase = createClient()
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    // Helper for Local Time String (YYYY-MM-DDTHH:mm)
+    // toISOString() returns UTC. We want Local for the input.
+    const toLocalISOString = (dateStr) => {
+        if (!dateStr) return ''
+        const date = new Date(dateStr)
+        // Offset in minutes (e.g., -540 for KST)
+        const offset = date.getTimezoneOffset() * 60000
+        const localDate = new Date(date.getTime() - offset)
+        return localDate.toISOString().slice(0, 16)
+    }
+
     const [formData, setFormData] = useState({
         name: festival.name,
-        start_date: festival.start_date ? new Date(festival.start_date).toISOString().slice(0, 16) : '',
-        end_date: festival.end_date ? new Date(festival.end_date).toISOString().slice(0, 16) : '',
+        start_date: toLocalISOString(festival.start_date),
+        end_date: toLocalISOString(festival.end_date),
         location: festival.location,
         image_url: festival.image_url || '',
         ticket_url: festival.ticket_url || '',
@@ -33,9 +44,11 @@ export default function FestivalHeader({ festival, user }) {
 
         // Convert empty strings to null for dates/urls if needed? 
         // Supabase handles date parsing, but empty string might error.
+        // formData dates are Local. Convert to UTC ISO for DB.
         const updateData = {
             ...formData,
-            end_date: formData.end_date || null
+            start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
+            end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null
         }
 
         const { error } = await supabase

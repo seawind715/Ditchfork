@@ -260,21 +260,28 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                 <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="Artist" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
                                                             </div>
 
-                                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
-                                                                {editForm.image_url && <img src={editForm.image_url} alt="Preview" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />}
-                                                                <input
-                                                                    type="file"
-                                                                    accept="image/*"
-                                                                    onChange={handleImageUpload}
-                                                                    style={{
-                                                                        flex: 1,
-                                                                        background: '#333',
-                                                                        padding: '0.3rem',
-                                                                        fontSize: '0.8rem',
-                                                                        color: '#ccc',
-                                                                        border: 'none'
-                                                                    }}
-                                                                />
+                                                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '0.8rem', padding: '0.5rem', border: '1px dashed #444', borderRadius: '6px', background: '#222' }}>
+                                                                <div style={{ position: 'relative', width: '50px', height: '50px', background: '#333', borderRadius: '4px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                                    {editForm.image_url ? (
+                                                                        <img src={editForm.image_url} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                    ) : (
+                                                                        <span style={{ fontSize: '1.5rem', color: '#555' }}>📷</span>
+                                                                    )}
+                                                                </div>
+                                                                <div style={{ flex: 1 }}>
+                                                                    <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '0.2rem' }}>공연 사진 추가/변경 (선택)</label>
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={handleImageUpload}
+                                                                        style={{
+                                                                            width: '100%',
+                                                                            fontSize: '0.8rem',
+                                                                            color: '#ccc',
+                                                                            cursor: 'pointer'
+                                                                        }}
+                                                                    />
+                                                                </div>
                                                             </div>
                                                             <input name="image_url" type="hidden" value={editForm.image_url || ''} />
 
