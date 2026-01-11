@@ -61,7 +61,9 @@ export default function NewFestivalPage() {
             lineup: (isExhibition || isSchool) ? null : formData.get('lineup'),
             description: isSchool ? null : formData.get('description'),
             ticket_price: isSchool ? null : formData.get('ticket_price'),
-            ticket_url: isSchool ? null : formData.get('ticket_url')
+            ticket_price: isSchool ? null : formData.get('ticket_price'),
+            ticket_url: isSchool ? null : formData.get('ticket_url'),
+            related_link: formData.get('related_link') // Add related_link
         }
 
         // Get current user
@@ -216,6 +218,11 @@ export default function NewFestivalPage() {
                                 <input name="ticket_url" type="url" placeholder="https://..." />
                             </div>
                         </div>
+
+                        <div>
+                            <label>참고 링크 (Official Site / SNS)</label>
+                            <input name="related_link" type="url" placeholder="https://instagram.com/..." style={{ width: '100%', padding: '1rem', background: 'var(--input)', border: '1px solid var(--border)', color: 'white' }} />
+                        </div>
                     </>
                 )}
 
@@ -223,6 +230,6 @@ export default function NewFestivalPage() {
                     {loading ? '등록 중...' : '이벤트 등록하기'}
                 </button>
             </form>
-        </div>
+        </div >
     )
 }

@@ -47,7 +47,8 @@ export default function FestivalHeader({ festival, user }) {
         ticket_url: festival.ticket_url || '',
         ticket_price: festival.ticket_price || '',
         description: festival.description || '',
-        lineup: festival.lineup || ''
+        lineup: festival.lineup || '',
+        related_link: festival.related_link || ''
     })
 
     // Init Logic for Scope/Category
@@ -103,6 +104,7 @@ export default function FestivalHeader({ festival, user }) {
             ticket_price: formData.ticket_price,
             description: formData.description,
             lineup: formData.lineup,
+            related_link: formData.related_link,
             type: `${scope}_${category}`, // Include type update
             start_date: combineToISO(formData.start_date_d, formData.start_date_t),
             end_date: combineToISO(formData.end_date_d, formData.end_date_t)
@@ -313,6 +315,11 @@ export default function FestivalHeader({ festival, user }) {
                     </div>
 
                     <div>
+                        <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>참고 링크 (공식 사이트/SNS)</label>
+                        <input name="related_link" value={formData.related_link} onChange={handleChange} placeholder="https://..." />
+                    </div>
+
+                    <div>
                         <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>상세 설명</label>
                         <textarea name="description" value={formData.description} onChange={handleChange} rows={5} />
                     </div>
@@ -348,6 +355,11 @@ export default function FestivalHeader({ festival, user }) {
                     {festival.ticket_url && (
                         <a href={festival.ticket_url} target="_blank" className="btn" style={{ padding: '1rem 2rem' }}>
                             티켓 예매하러 가기 ({festival.ticket_price || '가격 정보 없음'})
+                        </a>
+                    )}
+                    {festival.related_link && (
+                        <a href={festival.related_link} target="_blank" className="btn btn-outline" style={{ padding: '0.8rem 1.5rem' }}>
+                            🔗 공식 사이트/SNS
                         </a>
                     )}
                     {user && (

@@ -65,7 +65,9 @@ export default async function FestivalDetailPage({ params }) {
 
         // 3. (School/Musical Only) Fetch Performances
         let performances = null
-        if (festival.type.startsWith('school_') || festival.type.endsWith('_musical')) {
+        const shouldFetchPerformances = (festival.type.startsWith('school_') || festival.type.endsWith('_musical')) && !festival.type.endsWith('_exhibition')
+
+        if (shouldFetchPerformances) {
             const { data: perfs } = await supabase
                 .from('festival_performances')
                 .select('*')
@@ -106,11 +108,11 @@ export default async function FestivalDetailPage({ params }) {
                     <FestivalHeader festival={festival} user={user} />
                 </section>
 
-                <section className="container section grid" style={{ gridTemplateColumns: '2fr 1fr', gap: '4rem', marginTop: '2rem' }}>
-
-                    <div>
+                <section className="container section" style={{ display: 'flex', flexWrap: 'wrap', gap: '4rem', marginTop: '2rem' }}>
+                    <div style={{ flex: '1 1 600px', minWidth: '0' }}>
                         {/* Content Section */}
-                        {(festival.type.startsWith('school_') || festival.type.endsWith('_musical')) ? (
+                        {/* Logic: Show Performance UI for School events OR Musicals, BUT NOT for Exhibitions */}
+                        {((festival.type.startsWith('school_') || festival.type.endsWith('_musical')) && !festival.type.endsWith('_exhibition')) ? (
                             <>
                                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <span>{festival.type.endsWith('_musical') ? '뮤지컬 넘버 / 캐스팅 (Musical Numbers & Cast)' : 'Timetable / Lineup'}</span>
@@ -166,7 +168,7 @@ export default async function FestivalDetailPage({ params }) {
                     </div>
 
                     {/* Sidebar */}
-                    <div>
+                    <div style={{ flex: '1 1 300px' }}>
                         {/* Find a Friend - Hide if Ended? User didn't explicitly say hide, but "Find a Friend" implies future tense.
                             However, user said: "Festival 탭 문구... 함께 갈 친구를 찾아보세요... 에 이미 끝난 페스티벌의 후기를 작성할 수 있음을 추가".
                             This suggests distinction. Let's hide Find Friend if ended to clean up UI and focus on Reviews.
