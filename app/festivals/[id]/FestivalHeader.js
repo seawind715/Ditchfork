@@ -35,6 +35,7 @@ export default function FestivalHeader({ festival, user }) {
 
     const [formData, setFormData] = useState({
         name: festival.name,
+        type: festival.type, // Track type
         // Separate fields for inputs
         start_date_d: startSplit.date,
         start_date_t: startSplit.time,
@@ -48,6 +49,21 @@ export default function FestivalHeader({ festival, user }) {
         description: festival.description || '',
         lineup: festival.lineup || ''
     })
+
+    // Init Logic for Scope/Category
+    const initType = festival.type || 'external_festival'
+    const [scope, setScope] = useState(initType.startsWith('school_') ? 'school' : 'external')
+    const [category, setCategory] = useState(() => {
+        if (initType.endsWith('_musical')) return 'musical'
+        if (initType.endsWith('_exhibition')) return 'exhibition'
+        return 'festival'
+    })
+
+    // Update formData.type whenever scope/category changes
+    const currentType = `${scope}_${category}`
+    if (formData.type !== currentType) {
+        setFormData(prev => ({ ...prev, type: currentType }))
+    }
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -87,6 +103,7 @@ export default function FestivalHeader({ festival, user }) {
             ticket_price: formData.ticket_price,
             description: formData.description,
             lineup: formData.lineup,
+            type: `${scope}_${category}`, // Include type update
             start_date: combineToISO(formData.start_date_d, formData.start_date_t),
             end_date: combineToISO(formData.end_date_d, formData.end_date_t)
         }
@@ -144,6 +161,79 @@ export default function FestivalHeader({ festival, user }) {
             <div className="container" style={{ padding: '2rem 0' }}>
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem', background: '#222', padding: '2rem', borderRadius: '8px' }}>
                     <h3 style={{ marginBottom: '1rem' }}>Edit Festival Info</h3>
+
+                    <div style={{ padding: '1rem', background: '#333', borderRadius: '8px', marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', color: 'var(--primary)', marginBottom: '0.8rem', fontWeight: 'bold' }}>이벤트 유형 변경</label>
+
+                        {/* Scope */}
+                        <div style={{ marginBottom: '1rem' }}>
+                            <span style={{ color: '#ccc', marginRight: '1rem', fontSize: '0.9rem' }}>행사 범위:</span>
+                            <div style={{ display: 'inline-flex', gap: '1rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                                    <input
+                                        type="radio"
+                                        name="scope"
+                                        value="external"
+                                        checked={scope === 'external'}
+                                        onChange={(e) => setScope(e.target.value)}
+                                        style={{ accentColor: 'var(--primary)' }}
+                                    />
+                                    <span style={{ color: scope === 'external' ? 'white' : '#888' }}>교외 (External)</span>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                                    <input
+                                        type="radio"
+                                        name="scope"
+                                        value="school"
+                                        checked={scope === 'school'}
+                                        onChange={(e) => setScope(e.target.value)}
+                                        style={{ accentColor: 'var(--primary)' }}
+                                    />
+                                    <span style={{ color: scope === 'school' ? 'white' : '#888' }}>교내 (School)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Category */}
+                        <div>
+                            <span style={{ color: '#ccc', marginRight: '1rem', fontSize: '0.9rem' }}>카테고리:</span>
+                            <div style={{ display: 'inline-flex', gap: '1rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                                    <input
+                                        type="radio"
+                                        name="category"
+                                        value="festival"
+                                        checked={category === 'festival'}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        style={{ accentColor: 'var(--primary)' }}
+                                    />
+                                    <span style={{ color: category === 'festival' ? 'white' : '#888' }}>축제 (Festival)</span>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                                    <input
+                                        type="radio"
+                                        name="category"
+                                        value="musical"
+                                        checked={category === 'musical'}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        style={{ accentColor: 'var(--primary)' }}
+                                    />
+                                    <span style={{ color: category === 'musical' ? 'white' : '#888' }}>뮤지컬 (Musical)</span>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                                    <input
+                                        type="radio"
+                                        name="category"
+                                        value="exhibition"
+                                        checked={category === 'exhibition'}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        style={{ accentColor: 'var(--primary)' }}
+                                    />
+                                    <span style={{ color: category === 'exhibition' ? 'white' : '#888' }}>전시 (Exhibition)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div>
@@ -227,7 +317,7 @@ export default function FestivalHeader({ festival, user }) {
                         <textarea name="description" value={formData.description} onChange={handleChange} rows={5} />
                     </div>
 
-                    {festival.type !== 'school' && (
+                    {!currentType.startsWith('school_') && (
                         <div>
                             <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>라인업 (텍스트)</label>
                             <textarea name="lineup" value={formData.lineup} onChange={handleChange} rows={3} />
