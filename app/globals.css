@@ -86,7 +86,7 @@
   --font-serif: 'Playfair Display', 'Apple SD Gothic Neo', serif;
 
   --radius: 0px;
-  --container-width: 1000px;
+  --container-width: 1200px;
 }
 
 /* Optional Light Mode Override if needed later */
@@ -258,6 +258,21 @@ a:hover {
 }
 
 /* Festival specific card layout */
+.review-header {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+}
+
+.text-content {
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  /* Korean word keep */
+  overflow-wrap: anywhere;
+  /* Break long URLs/English force */
+}
+
 .festival-card {
   display: flex;
   text-decoration: none;
@@ -460,6 +475,31 @@ textarea:focus {
 
   .container {
     padding: 0 1rem;
+    width: 100%;
+    /* Ensure full width on mobile */
+  }
+
+  /* Review Header Mobile */
+  .review-header {
+    flex-direction: column !important;
+    gap: 2rem !important;
+    text-align: center;
+  }
+
+  .review-header .text-left {
+    text-align: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Tablet / Medium Screens */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 

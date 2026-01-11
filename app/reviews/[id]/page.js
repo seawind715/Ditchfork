@@ -65,7 +65,7 @@ export default async function ReviewDetailPage({ params }) {
             <article>
                 {/* Header / Hero for the Album */}
                 <section className="section" style={{ background: 'var(--secondary)', borderBottom: '1px solid var(--border)', padding: '3rem 0' }}>
-                    <div className="container" style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}>
+                    <div className="container review-header">
                         <div style={{
                             width: '300px',
                             height: '300px',
@@ -74,7 +74,9 @@ export default async function ReviewDetailPage({ params }) {
                             border: '1px solid var(--border)',
                             background: '#333',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            maxWidth: '100%',
+                            margin: '0 auto' /* Centered on mobile */
                         }}>
                             {primaryReview.is_cover_hidden ? (
                                 <div style={{
@@ -103,7 +105,7 @@ export default async function ReviewDetailPage({ params }) {
                                 <span style={{ color: '#666' }}>No Cover</span>
                             )}
                         </div>
-                        <div>
+                        <div className="text-left" style={{ width: '100%' }}>
                             <div style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
                                 <span style={{ color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                     {primaryReview.genre}
@@ -147,7 +149,7 @@ export default async function ReviewDetailPage({ params }) {
                             )}
 
                             {/* Streaming Links */}
-                            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <a
                                     href={primaryReview.spotify_url || `https://open.spotify.com/search/${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
                                     target="_blank"

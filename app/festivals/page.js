@@ -76,8 +76,12 @@ export default async function FestivalsPage({ searchParams }) {
             if (currentTab === 'upcoming') {
                 festivals.sort((a, b) => {
                     // 1. School Priority
-                    if (a.type === 'school' && b.type !== 'school') return -1
-                    if (a.type !== 'school' && b.type === 'school') return 1
+                    // 1. School Priority (Check if type starts with 'school_')
+                    const isSchoolA = a.type?.startsWith('school_')
+                    const isSchoolB = b.type?.startsWith('school_')
+
+                    if (isSchoolA && !isSchoolB) return -1
+                    if (!isSchoolA && isSchoolB) return 1
 
                     // 2. Date Ascending
                     return new Date(a.start_date) - new Date(b.start_date)
@@ -87,7 +91,7 @@ export default async function FestivalsPage({ searchParams }) {
 
         return (
             <div className="container section">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                     <div>
                         <h1 style={{ fontSize: '3rem' }}>Events</h1>
                         <p style={{ color: '#888' }}>
@@ -102,7 +106,7 @@ export default async function FestivalsPage({ searchParams }) {
                 </div>
 
                 {/* Tags */}
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid #333', paddingBottom: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid #333', paddingBottom: '1rem', flexWrap: 'wrap' }}>
                     <Link
                         href="/festivals?tab=ended"
                         className="btn btn-outline"

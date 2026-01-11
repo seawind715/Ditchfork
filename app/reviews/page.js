@@ -69,7 +69,7 @@ export default async function ReviewsPage({ searchParams }) {
 
     return (
         <div className="container section">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <h1>{search ? `'${search}' 검색 결과` : 'Reviews'}</h1>
                 <Link href="/reviews/new" className="btn">
                     + 리뷰 작성

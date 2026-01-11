@@ -14,8 +14,14 @@ export default function NewFestivalPage() {
     const minutes = ['00', '10', '20', '30', '40', '50']
 
     // Type state
-    const [type, setType] = useState('external')
-    const isSchool = type === 'school'
+    // Type state
+    const [scope, setScope] = useState('external') // 'external' or 'school'
+    const [category, setCategory] = useState('festival') // 'festival', 'musical', 'exhibition'
+
+    // Legacy Helpers
+    const isSchool = scope === 'school'
+    const isMusical = category === 'musical'
+    const isExhibition = category === 'exhibition'
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -42,9 +48,17 @@ export default function NewFestivalPage() {
             location: formData.get('location'),
             start_date: startDateISO,
             end_date: endDateISO, // Add end_date
-            type: type, // Add type
+            end_date: endDateISO, // Add end_date
+            type: `${scope}_${category}`, // Combine scope and category
             // Conditional fields based on type
-            lineup: isSchool ? null : formData.get('lineup'),
+            lineup: isExhibition ? null : (isSchool ? null : formData.get('lineup')), // Exhibition has no lineup input usually, or descriptive? User implied no performance.
+            // Wait, logic: External Festival has lineup input. external_musical might want Cast list in description? 
+            // Let's keep lineup input for now for non-school, non-exhibition?
+            // Actually, for consistency: 
+            // Festival (External): Lineup Input
+            // Musical: Lineup Input? Using PerformanceForm for Cast. Maybe Lineup field is "Main Cast Summary"?
+            // Exhibition: No lineup.
+            lineup: (isExhibition || isSchool) ? null : formData.get('lineup'),
             description: isSchool ? null : formData.get('description'),
             ticket_price: isSchool ? null : formData.get('ticket_price'),
             ticket_url: isSchool ? null : formData.get('ticket_url')
@@ -78,32 +92,54 @@ export default function NewFestivalPage() {
             <h1>새 이벤트 등록 (New Event)</h1>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-                {/* Type Selection */}
+                {/* Scope Selection */}
                 <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>이벤트 유형</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>개최 범위 (Scope)</label>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: !isSchool ? 'var(--primary)' : 'var(--secondary)', padding: '0.5rem 1rem', borderRadius: '4px', transition: 'background 0.2s' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: scope === 'external' ? 'var(--primary)' : 'var(--secondary)', padding: '0.5rem 1rem', borderRadius: '4px', transition: 'background 0.2s' }}>
                             <input
                                 type="radio"
-                                name="type"
+                                name="scope"
                                 value="external"
-                                checked={type === 'external'}
-                                onChange={(e) => setType(e.target.value)}
+                                checked={scope === 'external'}
+                                onChange={(e) => setScope(e.target.value)}
                                 style={{ width: 'auto', margin: 0 }}
                             />
                             교외 (External)
                         </label>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: isSchool ? 'var(--primary)' : 'var(--secondary)', padding: '0.5rem 1rem', borderRadius: '4px', transition: 'background 0.2s' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: scope === 'school' ? 'var(--primary)' : 'var(--secondary)', padding: '0.5rem 1rem', borderRadius: '4px', transition: 'background 0.2s' }}>
                             <input
                                 type="radio"
-                                name="type"
+                                name="scope"
                                 value="school"
-                                checked={type === 'school'}
-                                onChange={(e) => setType(e.target.value)}
+                                checked={scope === 'school'}
+                                onChange={(e) => setScope(e.target.value)}
                                 style={{ width: 'auto', margin: 0 }}
                             />
                             교내 (School)
                         </label>
+                    </div>
+                </div>
+
+                {/* Category Selection */}
+                <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>이벤트 유형 (Category)</label>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        {['festival', 'musical', 'exhibition'].map(cat => (
+                            <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: category === cat ? 'var(--primary)' : 'var(--secondary)', padding: '0.5rem 1rem', borderRadius: '4px', transition: 'background 0.2s' }}>
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    value={cat}
+                                    checked={category === cat}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    style={{ width: 'auto', margin: 0 }}
+                                />
+                                {cat === 'festival' && '페스티벌 (Festival)'}
+                                {cat === 'musical' && '뮤지컬 (Musical)'}
+                                {cat === 'exhibition' && '전시 (Exhibition)'}
+                            </label>
+                        ))}
                     </div>
                 </div>
 
@@ -158,13 +194,15 @@ export default function NewFestivalPage() {
 
                 {!isSchool && (
                     <>
-                        <div>
-                            <label>출연 아티스트 (라인업)</label>
-                            <textarea name="lineup" rows={3} placeholder="주요 라인업을 콤마(,)로 구분해서 적어주세요." style={{ width: '100%', padding: '1rem', background: 'var(--input)', border: '1px solid var(--border)', color: 'white' }}></textarea>
-                        </div>
+                        {!isExhibition && (
+                            <div>
+                                <label>출연 아티스트 / 라인업 (요약)</label>
+                                <textarea name="lineup" rows={3} placeholder={isMusical ? "주요 캐스팅을 간단히 적어주세요." : "주요 라인업을 콤마(,)로 구분해서 적어주세요."} style={{ width: '100%', padding: '1rem', background: 'var(--input)', border: '1px solid var(--border)', color: 'white' }}></textarea>
+                            </div>
+                        )}
 
                         <div>
-                            <label>이벤트 상세 내용</label>
+                            <label>{isExhibition ? '전시 소개' : '이벤트 상세 내용'}</label>
                             <textarea name="description" rows={6} placeholder="어떤 이벤트인가요?" style={{ width: '100%', padding: '1rem', background: 'var(--input)', border: '1px solid var(--border)', color: 'white' }}></textarea>
                         </div>
 

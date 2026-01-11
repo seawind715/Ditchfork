@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { uploadImage } from '@/utils/imageUpload'
 
-export default function PerformanceList({ initialPerformances, festivalId, user }) {
+export default function PerformanceList({ initialPerformances, festivalId, user, festivalType }) {
     const [performances, setPerformances] = useState(initialPerformances)
     const [draggedItem, setDraggedItem] = useState(null)
     const [editingId, setEditingId] = useState(null)
@@ -16,6 +16,7 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
 
     const supabase = createClient()
     const router = useRouter()
+    const isMusical = festivalType?.endsWith('_musical')
 
     // Sync with props
     useEffect(() => {
@@ -255,9 +256,17 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                     {isEditing ? (
                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                                <input name="section" value={editForm.section || '1부'} onChange={handleEditChange} placeholder="Section" style={{ width: '60px', padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} list="sec-opts" />
-                                                                <datalist id="sec-opts"><option value="1부" /><option value="2부" /></datalist>
-                                                                <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder="Artist" style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
+                                                                <input name="section" value={editForm.section || (isMusical ? '1막' : '1부')} onChange={handleEditChange} placeholder={isMusical ? "Act" : "Section"} style={{ width: '60px', padding: '0.3rem', background: '#333', color: 'white', border: 'none' }} list="sec-opts" />
+                                                                <datalist id="sec-opts">
+                                                                    {isMusical ? (
+                                                                        <>
+                                                                            <option value="1막" /><option value="2막" />
+                                                                        </>
+                                                                    ) : (
+                                                                        <><option value="1부" /><option value="2부" /></>
+                                                                    )}
+                                                                </datalist>
+                                                                <input name="artist" value={editForm.artist} onChange={handleEditChange} placeholder={isMusical ? "Cast" : "Artist"} style={{ flex: 1, padding: '0.3rem', background: '#333', color: 'white', border: 'none', fontWeight: 'bold' }} />
                                                             </div>
 
                                                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '0.8rem', padding: '0.5rem', border: '1px dashed #444', borderRadius: '6px', background: '#222' }}>
@@ -307,13 +316,27 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                                                                 <span key={i} style={{ fontSize: '0.7rem', background: '#333', padding: '0.1rem 0', width: '100%', textAlign: 'center', borderRadius: '3px', color: '#aaa', display: 'block' }}>{g}</span>
                                                                             ))}
                                                                         </div>
-                                                                        <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>{perf.artist}</h4>
+                                                                        <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
+                                                                            {isMusical ? (
+                                                                                <>
+                                                                                    {perf.content || <span style={{ color: '#666', fontStyle: 'italic' }}>No Number Title</span>}
+                                                                                    <span style={{ fontSize: '0.9rem', fontWeight: 400, color: '#aaa', marginLeft: '0.5rem' }}>
+                                                                                        - {perf.artist}
+                                                                                    </span>
+                                                                                </>
+                                                                            ) : (
+                                                                                perf.artist
+                                                                            )}
+                                                                        </h4>
                                                                     </div>
                                                                     <div style={{ color: '#ccc', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
                                                                         {perf.is_secret ? (
                                                                             <span style={{ color: '#666', fontWeight: 700, fontStyle: 'italic' }}>Secret! 🤫</span>
                                                                         ) : (
-                                                                            perf.content || (!perf.image_url && <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보와 사진을 추가해주세요!</span>)
+                                                                            // For Musical, main content is used as title above.
+                                                                            isMusical ? null : (
+                                                                                perf.content || (!perf.image_url && <span style={{ color: '#555', fontSize: '0.9rem', fontStyle: 'italic' }}>공연 정보와 사진을 추가해주세요!</span>)
+                                                                            )
                                                                         )}
                                                                     </div>
                                                                 </div>
@@ -330,7 +353,8 @@ export default function PerformanceList({ initialPerformances, festivalId, user 
                                     })}
                                     {section.items.length === 0 && <div style={{ color: '#666', textAlign: 'center' }}>No Items</div>}
                                 </div>
-                            )}
+                            )
+                            }
                         </div>
                     )
                 })

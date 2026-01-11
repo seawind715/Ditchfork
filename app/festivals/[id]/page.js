@@ -63,9 +63,9 @@ export default async function FestivalDetailPage({ params }) {
             .eq('festival_id', id)
             .order('created_at', { ascending: false })
 
-        // 3. (School Only) Fetch Performances
+        // 3. (School/Musical Only) Fetch Performances
         let performances = null
-        if (festival.type === 'school') {
+        if (festival.type.startsWith('school_') || festival.type.endsWith('_musical')) {
             const { data: perfs } = await supabase
                 .from('festival_performances')
                 .select('*')
@@ -106,27 +106,25 @@ export default async function FestivalDetailPage({ params }) {
                     <FestivalHeader festival={festival} user={user} />
                 </section>
 
-                <section className="container section grid" style={{ gridTemplateColumns: '2fr 1fr', gap: '4rem' }}>
+                <section className="container section grid" style={{ gridTemplateColumns: '2fr 1fr', gap: '4rem', marginTop: '2rem' }}>
 
                     <div>
                         {/* Content Section */}
-                        {festival.type === 'school' ? (
+                        {(festival.type.startsWith('school_') || festival.type.endsWith('_musical')) ? (
                             <>
                                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span>Timetable / Lineup</span>
-                                    <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400 }}>누구나 공연 정보를 추가하고 자유롭게 수정할 수 있어요!</span>
+                                    <span>{festival.type.endsWith('_musical') ? '뮤지컬 넘버 / 캐스팅 (Musical Numbers & Cast)' : 'Timetable / Lineup'}</span>
+                                    {festival.type.startsWith('school_') && (
+                                        <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400 }}>누구나 공연 정보를 추가하고 자유롭게 수정할 수 있어요!</span>
+                                    )}
                                 </h3>
 
-                                <PerformanceList initialPerformances={performances || []} festivalId={id} user={user} />
+                                <PerformanceList initialPerformances={performances || []} festivalId={id} user={user} festivalType={festival.type} />
 
-                                {/* Add Performance Form - Always visible for school events, even if ended, for history/record? 
-                                    Or hide if ended? User said "행사가 끝난 이후 ... 행사에 후기를 달 수 있게 만들어줘". 
-                                    Doesn't explicitly say disable editing. Let's keep it open for now or maybe user wants it locked?
-                                    User didn't specify locking.
-                                */}
+                                {/* Add Performance Form */}
                                 {user ? (
                                     <div style={{ marginTop: '2rem' }}>
-                                        <PerformanceForm festivalId={id} />
+                                        <PerformanceForm festivalId={id} festivalType={festival.type} />
                                     </div>
                                 ) : (
                                     <div style={{ padding: '1rem', background: '#222', textAlign: 'center', marginTop: '2rem' }}>
@@ -135,17 +133,29 @@ export default async function FestivalDetailPage({ params }) {
                                 )}
                             </>
                         ) : (
-                            <>
-                                <h3>라인업</h3>
-                                <div style={{ fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '3rem', whiteSpace: 'pre-wrap' }}>
-                                    {festival.lineup || '라인업 정보가 없습니다.'}
-                                </div>
-                                <h3>상세 내용</h3>
-                                <div style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', whiteSpace: 'pre-wrap' }}>
-                                    {festival.description}
-                                </div>
-                            </>
+                            // External Festival or Exhibition
+                            festival.type.endsWith('_exhibition') ? (
+                                <>
+                                    <h3>전시 소개</h3>
+                                    <div className="text-content" style={{ fontSize: '1.2rem', marginBottom: '3rem', color: '#eee' }}>
+                                        {festival.description || '전시 소개가 없습니다.'}
+                                    </div>
+                                </>
+                            ) : (
+                                // Default External Festival
+                                <>
+                                    <h3>라인업 (요약)</h3>
+                                    <div className="text-content" style={{ fontSize: '1.2rem', marginBottom: '3rem' }}>
+                                        {festival.lineup || '라인업 정보가 없습니다.'}
+                                    </div>
+                                    <h3>상세 내용</h3>
+                                    <div className="text-content" style={{ fontSize: '1.1rem', color: '#ccc' }}>
+                                        {festival.description}
+                                    </div>
+                                </>
+                            )
                         )}
+
 
                         {/* Event Reviews (Only if Started or Ended) */}
                         {isStarted && (
@@ -161,7 +171,8 @@ export default async function FestivalDetailPage({ params }) {
                             However, user said: "Festival 탭 문구... 함께 갈 친구를 찾아보세요... 에 이미 끝난 페스티벌의 후기를 작성할 수 있음을 추가".
                             This suggests distinction. Let's hide Find Friend if ended to clean up UI and focus on Reviews.
                          */}
-                        {festival.type !== 'school' && !isEnded && (
+                        {/* School Types Priority Logic for Sidebar if needed */}
+                        {!festival.type.startsWith('school_') && !isEnded && (
                             <div style={{ background: '#151515', padding: '1.5rem', border: '1px solid var(--border)' }}>
                                 <h3 style={{ marginBottom: '0.5rem' }}>Find a Friend</h3>
                                 <p style={{ color: '#888', marginBottom: '1.5rem' }}>

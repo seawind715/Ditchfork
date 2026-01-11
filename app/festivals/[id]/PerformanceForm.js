@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function PerformanceForm({ festivalId }) {
+export default function PerformanceForm({ festivalId, festivalType }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [selectedGenres, setSelectedGenres] = useState(['Band']) // Default
@@ -83,61 +83,78 @@ export default function PerformanceForm({ festivalId }) {
         setLoading(false)
     }
 
+    const isMusical = festivalType?.endsWith('_musical')
+
     return (
         <div style={{ background: '#222', padding: '1.5rem', borderRadius: '4px', border: '1px solid #333' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Add Performance</h3>
+            <h3 style={{ marginBottom: '1rem' }}>{isMusical ? 'Add Number / Cast' : 'Add Performance'}</h3>
             <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                    <div>
-                        <label style={{ fontSize: '0.9rem', color: '#888', marginBottom: '0.5rem', display: 'block' }}>장르 (다중 선택 가능)</label>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            {genres.map(g => (
-                                <button
-                                    key={g.value}
-                                    type="button"
-                                    onClick={() => toggleGenre(g.value)}
-                                    style={{
-                                        padding: '0.4rem 0.8rem',
-                                        borderRadius: '20px',
-                                        border: selectedGenres.includes(g.value) ? '1px solid var(--primary)' : '1px solid #444',
-                                        background: selectedGenres.includes(g.value) ? 'var(--primary)' : 'transparent',
-                                        color: selectedGenres.includes(g.value) ? 'white' : '#aaa',
-                                        cursor: 'pointer',
-                                        fontSize: '0.9rem',
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
-                                    {g.label}
-                                </button>
-                            ))}
+                {!isMusical && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                        <div>
+                            <label style={{ fontSize: '0.9rem', color: '#888', marginBottom: '0.5rem', display: 'block' }}>장르 (다중 선택 가능)</label>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {genres.map(g => (
+                                    <button
+                                        key={g.value}
+                                        type="button"
+                                        onClick={() => toggleGenre(g.value)}
+                                        style={{
+                                            padding: '0.4rem 0.8rem',
+                                            borderRadius: '20px',
+                                            border: selectedGenres.includes(g.value) ? '1px solid var(--primary)' : '1px solid #444',
+                                            background: selectedGenres.includes(g.value) ? 'var(--primary)' : 'transparent',
+                                            color: selectedGenres.includes(g.value) ? 'white' : '#aaa',
+                                            cursor: 'pointer',
+                                            fontSize: '0.9rem',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {g.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 <div>
-                    <label style={{ fontSize: '0.9rem', color: '#888' }}>공연 부 (Section) (선택)</label>
-                    <input name="section" placeholder="예: 1부, 2부, 오프닝..." list="section-options" style={{ width: '100%', padding: '0.5rem' }} />
+                    <label style={{ fontSize: '0.9rem', color: '#888' }}>{isMusical ? '막 (Act) 구분' : '공연 부 (Section) (선택)'}</label>
+                    <input name="section" placeholder={isMusical ? "예: 1막, 2막" : "예: 1부, 2부, 오프닝..."} list="section-options" style={{ width: '100%', padding: '0.5rem' }} />
                     <datalist id="section-options">
-                        <option value="1부" />
-                        <option value="2부" />
-                        <option value="3부" />
-                        <option value="오프닝" />
-                        <option value="피날레" />
+                        {isMusical ? (
+                            <>
+                                <option value="1막" />
+                                <option value="2막" />
+                                <option value="인터미션" />
+                            </>
+                        ) : (
+                            <>
+                                <option value="1부" />
+                                <option value="2부" />
+                                <option value="3부" />
+                                <option value="오프닝" />
+                                <option value="피날레" />
+                            </>
+                        )}
                     </datalist>
                 </div>
 
                 <div>
-                    <label style={{ fontSize: '0.9rem', color: '#888' }}>출연자 / 팀명 (Artist)</label>
-                    <input name="artist" required placeholder="예: CLOUD9" style={{ width: '100%', padding: '0.5rem', fontWeight: 'bold' }} />
+                    <label style={{ fontSize: '0.9rem', color: '#888' }}>{isMusical ? '배역 / 배우 (Cast)' : '출연자 / 팀명 (Artist)'}</label>
+                    <input name="artist" required placeholder={isMusical ? "예: 지킬 (홍길동)" : "예: CLOUD9"} style={{ width: '100%', padding: '0.5rem', fontWeight: 'bold' }} />
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                    <input type="checkbox" name="is_secret" id="is_secret" style={{ width: 'auto', marginBottom: 0 }} />
-                    <label htmlFor="is_secret" style={{ cursor: 'pointer', selectNone: 'none' }}>비밀(Secret) 공연으로 설정하기</label>
-                </div>
+                {!isMusical && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                        <input type="checkbox" name="is_secret" id="is_secret" style={{ width: 'auto', marginBottom: 0 }} />
+                        <label htmlFor="is_secret" style={{ cursor: 'pointer', selectNone: 'none' }}>비밀(Secret) 공연으로 설정하기</label>
+                    </div>
+                )}
 
                 <div>
-                    <textarea name="content" rows={3} placeholder="공연 내용을 입력해주세요. (곡 목록, 멤버 소개 등)" style={{ width: '100%', padding: '0.5rem' }} />
+                    <label style={{ fontSize: '0.9rem', color: '#888' }}>{isMusical ? '넘버 제목 (Number Title)' : '공연 내용 (Content)'}</label>
+                    <textarea name="content" rows={3} placeholder={isMusical ? "예: 지금 이 순간 (This is the moment)" : "공연 내용을 입력해주세요. (곡 목록, 멤버 소개 등)"} style={{ width: '100%', padding: '0.5rem' }} />
                 </div>
 
                 <button type="submit" disabled={loading} className="btn" style={{ width: '100%' }}>
