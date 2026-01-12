@@ -2,17 +2,17 @@
 
 export default function ScoreGuide({ compact = false }) {
     const scores = [
-        { val: 10, label: "시대를 초월한 명반" },
-        { val: 9, label: "장르를 대표하는 명반" },
-        { val: 8, label: "매우 뛰어난 앨범" },
-        { val: 7, label: "좋은 앨범" },
-        { val: 6, label: "들을 만한 가치 있는 앨범" },
-        { val: 5, label: "나쁘지도 인상적이지도 않은 앨범" },
-        { val: 4, label: "좋지 않은 앨범" },
-        { val: 3, label: "감상이 힘든 앨범" },
-        { val: 2, label: "총체적 난국인 앨범" },
-        { val: 1, label: "가치를 찾기 힘든 앨범" },
-        { val: 0, label: "음악으로 볼 수 없는 앨범" }
+        { val: 10, label: "시대를 초월한 명작" },
+        { val: 9, label: "장르를 대표하는 명작" },
+        { val: 8, label: "매우 뛰어난 작품" },
+        { val: 7, label: "좋은 작품" },
+        { val: 6, label: "들을 만한 가치 있는 작품" },
+        { val: 5, label: "나쁘지도 인상적이지도 않은 작품" },
+        { val: 4, label: "좋지 않은 작품" },
+        { val: 3, label: "감상이 힘든 작품" },
+        { val: 2, label: "총체적 난국인 작품" },
+        { val: 1, label: "가치를 찾기 힘든 작품" },
+        { val: 0, label: "예술로 볼 수 없는 작품" }
     ]
 
     const content = (
