@@ -16,29 +16,46 @@ export default function FestivalCard({ festival, userEmail }) {
         dateStr = `${dateStr} ~ ${endDateStr}`
     }
 
-    // Status & D-Day Logic
-    let status = 'UPCOMING'
-    let dDay = ''
+    // D-Day Logic (Time-insensitive)
+    const today = new Date(now)
+    today.setHours(0, 0, 0, 0)
 
-    // Set time to 00:00:00 for accurate day comparison if needed, but keeping simple TS comparison usually works
-    const nowTs = now.getTime()
-    const startTs = start.getTime()
-    const endTs = end ? end.getTime() : start.getTime() + (24 * 60 * 60 * 1000) - 1 // Default 1 day if no end
+    const startDate = new Date(start)
+    startDate.setHours(0, 0, 0, 0)
 
-    if (nowTs > endTs) {
+    const endDate = new Date(end || start) // Fallback to start if no end
+    endDate.setHours(0, 0, 0, 0)
+
+    // Check status based on timestamps (using original full times for detailed status if needed, 
+    // but usually ONGOING means "within the date range")
+    // Let's stick to user request: "Today" -> "D-Day".
+
+    // Recalculate timestamps based on normalized dates
+    const todayTs = today.getTime()
+    const startTs = startDate.getTime()
+    const endTs = endDate.getTime()
+
+    if (todayTs > endTs) {
         status = 'ENDED'
         dDay = 'END'
-    } else if (nowTs >= startTs && nowTs <= endTs) {
+    } else if (todayTs >= startTs && todayTs <= endTs) {
         status = 'ONGOING'
-        dDay = 'NOW'
+        dDay = 'NOW' // Or D-Day? usually ONGOING events show "NOW" or "Ing"
+        // If it's the exact start day, maybe D-Day is better?
+        // User asked for "D-Day". Let's see. 
+        // Usually ONGOING implies it has started. 
+        // If today is start day, it is technically D-Day.
+        if (todayTs === startTs) dDay = 'D-Day'
+        else dDay = 'NOW'
     } else {
         status = 'UPCOMING'
-        const diffTime = start - now
+        const diffTime = startTs - todayTs
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
         dDay = diffDays === 0 ? 'D-Day' : `D-${diffDays}`
     }
 
-    const typeLabel = festival.type === 'school' ? '교내' : '교외'
+    const isSchool = festival.type?.startsWith('school_')
+    const typeLabel = isSchool ? '교내' : '교외'
 
     return (
         <div className="card festival-card">
@@ -67,10 +84,10 @@ export default function FestivalCard({ festival, userEmail }) {
                         </span>
                     </div>
 
-                    <h3 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{festival.name}</h3>
+                    <h3 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.5rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{festival.name}</h3>
                     <div style={{ color: '#aaa', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {festival.type === 'school' ? (
-                            <span style={{ color: 'var(--accent)' }}>View Timetable & Lineup</span>
+                        {isSchool ? (
+                            <span style={{ color: 'var(--accent)' }}>View Event Details</span>
                         ) : (
                             `Lineup: ${festival.lineup || '공개 예정'}`
                         )}
