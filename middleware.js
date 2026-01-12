@@ -57,6 +57,32 @@ export async function middleware(request) {
         console.error('Middleware Supabase error:', e)
     }
 
+    // --- MAINTENANCE MODE LOGIC ---
+    // Check for bypass cookie
+    const bypassCookie = request.cookies.get('maintenance_bypass')
+    const isMaintenance = false // Temporarily disabled for debugging
+
+    if (isMaintenance && !bypassCookie) {
+        // Allow access to:
+        // 1. /coming-soon (The landing page)
+        // 2. /api/admin/maintenance-bypass (The backdoor)
+        // 3. /login, /auth (To allow logging in to get the cookie/check user)
+        // 4. /_next, /static, etc (Already handled by config matcher usually, but good to be safe)
+        // 5. /fonts, /images (Assets)
+
+        const path = request.nextUrl.pathname
+        if (
+            !path.startsWith('/coming-soon') &&
+            !path.startsWith('/api/admin/maintenance-bypass') &&
+            !path.startsWith('/login') &&
+            !path.startsWith('/auth') &&
+            !path.startsWith('/_next') &&
+            !path.match(/\.(png|jpg|jpeg|gif|svg|ico|ttf|woff|woff2)$/)
+        ) {
+            return NextResponse.redirect(new URL('/coming-soon', request.url))
+        }
+    }
+
     return response
 }
 
