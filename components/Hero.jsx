@@ -21,14 +21,16 @@ export default function Hero({ initialData, user }) {
         const form = e.target
         const headline = form.headline.value
         const subheadline = form.subheadline.value
+        const link_text = form.link_text.value
+        const link_url = form.link_url.value
 
         const { error } = await supabase
             .from('hero_content')
-            .update({ headline, subheadline })
+            .update({ headline, subheadline, link_text, link_url })
             .eq('id', data.id)
 
         if (!error) {
-            setData({ ...data, headline, subheadline })
+            setData({ ...data, headline, subheadline, link_text, link_url })
             setIsEditing(false)
             router.refresh()
         } else {
@@ -49,6 +51,16 @@ export default function Hero({ initialData, user }) {
                         <div>
                             <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>설명 (서브 헤드라인)</label>
                             <textarea name="subheadline" defaultValue={data.subheadline} rows={3} style={{ width: '100%' }} />
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <div style={{ flex: 1 }}>
+                                <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>버튼 텍스트 (예: 설문 참여하기)</label>
+                                <input name="link_text" defaultValue={data.link_text || ''} style={{ width: '100%' }} />
+                            </div>
+                            <div style={{ flex: 2 }}>
+                                <label style={{ display: 'block', color: '#888', marginBottom: '0.5rem' }}>링크 URL</label>
+                                <input name="link_url" defaultValue={data.link_url || ''} placeholder="https://..." style={{ width: '100%' }} />
+                            </div>
                         </div>
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button type="submit" className="btn" disabled={loading}>{loading ? '저장 중...' : '저장'}</button>
@@ -118,6 +130,11 @@ export default function Hero({ initialData, user }) {
                             <p style={{ fontSize: '1.2rem', color: '#999', marginBottom: '1.5rem', wordBreak: 'keep-all' }}>
                                 {data.subheadline}
                             </p>
+                            {data.link_text && data.link_url && (
+                                <a href={data.link_url} target="_blank" className="btn" style={{ fontSize: '1.1rem', padding: '1rem 2rem' }}>
+                                    {data.link_text} →
+                                </a>
+                            )}
                         </>
                     )}
 
