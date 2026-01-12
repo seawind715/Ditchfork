@@ -21,45 +21,46 @@ export default function FestivalCard({ festival, userEmail }) {
     let dDay = 'D-?'
 
     try {
-        const today = new Date(now)
+        if (!festival.start_date) throw new Error("No start date")
+
+        // Parse dates safely
+        const today = new Date()
         today.setHours(0, 0, 0, 0)
 
-        const startDate = new Date(start)
+        const startDate = new Date(festival.start_date)
         startDate.setHours(0, 0, 0, 0)
 
-        const endDate = new Date(end || start)
+        // End date fallback
+        const endDate = festival.end_date ? new Date(festival.end_date) : new Date(startDate)
         endDate.setHours(0, 0, 0, 0)
 
-        const todayTs = today.getTime()
-        const startTs = startDate.getTime()
-        const endTs = endDate.getTime()
-
-        if (isNaN(todayTs) || isNaN(startTs)) {
-            dDay = 'ERR'
-            status = 'UPCOMING'
+        // Validate
+        if (isNaN(startDate.getTime())) {
+            dDay = 'Err'
         } else {
+            const todayTs = today.getTime()
+            const startTs = startDate.getTime()
+            const endTs = endDate.getTime()
+
             if (todayTs > endTs) {
                 status = 'ENDED'
                 dDay = 'END'
             } else if (todayTs >= startTs && todayTs <= endTs) {
                 status = 'ONGOING'
-                if (todayTs === startTs) {
-                    dDay = 'D-Day'
-                } else {
-                    dDay = 'NOW'
-                }
+                dDay = (todayTs === startTs) ? 'D-Day' : 'NOW'
             } else {
                 status = 'UPCOMING'
-                // Future
                 const diffTime = startTs - todayTs
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
                 dDay = diffDays === 0 ? 'D-Day' : `D-${diffDays}`
             }
         }
     } catch (e) {
-        console.error("Date error", e)
-        dDay = 'ERR'
+        dDay = 'Err' // Fallback for any error
     }
+
+    // Double safety for "White Box" issue
+    if (!dDay) dDay = '?'
 
     const isSchool = festival.type?.startsWith('school_')
     const typeLabel = isSchool ? '교내' : '교외'
