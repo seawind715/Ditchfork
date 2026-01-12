@@ -75,7 +75,8 @@ export default function FestivalCard({ festival, userEmail }) {
             >
                 {/* Date Section (Left) */}
                 <div className="festival-card-date" style={{
-                    background: status === 'ONGOING' ? 'var(--accent)' : (status === 'ENDED' ? '#333' : 'var(--primary)')
+                    background: status === 'ONGOING' ? 'var(--accent)' : (status === 'ENDED' ? '#333' : 'var(--primary)'),
+                    color: status === 'ONGOING' ? 'var(--background)' : 'white'
                 }}>
                     <div style={{ fontSize: '0.8rem', fontWeight: 600 }}>{status}</div>
                     <div style={{ fontSize: '1.5rem', fontWeight: 900, margin: '0.2rem 0' }}>{dDay}</div>
