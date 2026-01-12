@@ -17,6 +17,9 @@ export default function FestivalCard({ festival, userEmail }) {
     }
 
     // D-Day Logic (Time-insensitive)
+    let status = 'UPCOMING'
+    let dDay = ''
+
     const today = new Date(now)
     today.setHours(0, 0, 0, 0)
 
