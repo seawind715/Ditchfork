@@ -90,13 +90,16 @@ export default async function Home() {
 
   // Aggregation
   const groupedReviews = groupReviews(allRawReviews)
-  const newReviews = groupedReviews.slice(0, 10) // Top 10 grouped
 
-  // New Release (current year - 3)
+  // Split into Album vs Movie
+  const albumReviews = groupedReviews.filter(r => r.category === 'music' || !r.category).slice(0, 10)
+  const movieReviews = groupedReviews.filter(r => r.category === 'movie').slice(0, 10)
+
+  // New Release (current year - 3) - Filter out movies
   const currentYear = new Date().getFullYear()
   const releaseLimit = currentYear - 1
   const newReleases = groupedReviews
-    .filter(r => parseInt(r.release_year) >= releaseLimit)
+    .filter(r => (r.category === 'music' || !r.category) && parseInt(r.release_year) >= releaseLimit)
     .slice(0, 10)
 
   const defaultHero = {
@@ -146,15 +149,36 @@ export default async function Home() {
         </div>
 
         <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
-          {newReviews.length > 0 ? (
-            newReviews.map((review: any) => (
+          {albumReviews.length > 0 ? (
+            albumReviews.map((review: any) => (
               <div key={review.id} style={{ width: '220px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
                 <ReviewCard review={review} />
               </div>
             ))
           ) : (
             <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
-              <p style={{ color: '#666' }}>최근 등록된 리뷰가 없습니다.</p>
+              <p style={{ color: '#666' }}>최근 등록된 앨범 리뷰가 없습니다.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* New Movie Review Section */}
+      <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
+          <h2 style={{ marginBottom: 0 }}>New Movie Review</h2>
+        </div>
+
+        <div style={{ display: 'flex', gap: '2rem', overflowX: 'auto', paddingBottom: '2rem', scrollbarWidth: 'thin', scrollSnapType: 'x mandatory' }} className="hide-scrollbar">
+          {movieReviews.length > 0 ? (
+            movieReviews.map((review: any) => (
+              <div key={review.id} style={{ width: '220px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
+                <ReviewCard review={review} />
+              </div>
+            ))
+          ) : (
+            <div style={{ width: '100%', textAlign: 'center', padding: '4rem', background: '#111', border: '1px solid #222' }}>
+              <p style={{ color: '#666' }}>최근 등록된 영화 리뷰가 없습니다.</p>
             </div>
           )}
         </div>
@@ -164,7 +188,7 @@ export default async function Home() {
       {/* New Release Section */}
       <section className="section container" style={{ borderTop: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '3rem' }}>
-          <h2 style={{ marginBottom: 0 }}>New Release</h2>
+          <h2 style={{ marginBottom: 0 }}>New Album Release</h2>
           <span style={{ fontSize: '0.9rem', color: '#666' }}>{releaseLimit}~{currentYear} 발매 앨범</span>
         </div>
 

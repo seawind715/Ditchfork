@@ -18,6 +18,7 @@ export function groupReviews(reviews) {
                 cover_image_url: review.cover_image_url,
                 is_cover_hidden: review.is_cover_hidden, // Pass through hidden state
                 genre: review.genre,
+                category: review.category, // Add category
                 total_rating: 0,
                 review_count: 0,
                 release_year: review.release_year, // Include release_year for filtering
@@ -36,6 +37,7 @@ export function groupReviews(reviews) {
             groups[key].cover_image_url = review.cover_image_url;
             groups[key].is_cover_hidden = review.is_cover_hidden; // Update hidden state
             groups[key].genre = review.genre;
+            groups[key].category = review.category; // Update category
             groups[key].created_at = review.created_at;
             groups[key].release_year = review.release_year; // Update year just in case
             // Note: artist/album name casing might differ slightly in DB, 
