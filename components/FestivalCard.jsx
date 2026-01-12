@@ -18,43 +18,47 @@ export default function FestivalCard({ festival, userEmail }) {
 
     // D-Day Logic (Time-insensitive)
     let status = 'UPCOMING'
-    let dDay = ''
+    let dDay = 'D-?'
 
-    const today = new Date(now)
-    today.setHours(0, 0, 0, 0)
+    try {
+        const today = new Date(now)
+        today.setHours(0, 0, 0, 0)
 
-    const startDate = new Date(start)
-    startDate.setHours(0, 0, 0, 0)
+        const startDate = new Date(start)
+        startDate.setHours(0, 0, 0, 0)
 
-    const endDate = new Date(end || start) // Fallback to start if no end
-    endDate.setHours(0, 0, 0, 0)
+        const endDate = new Date(end || start)
+        endDate.setHours(0, 0, 0, 0)
 
-    // Check status based on timestamps (using original full times for detailed status if needed, 
-    // but usually ONGOING means "within the date range")
-    // Let's stick to user request: "Today" -> "D-Day".
+        const todayTs = today.getTime()
+        const startTs = startDate.getTime()
+        const endTs = endDate.getTime()
 
-    // Recalculate timestamps based on normalized dates
-    const todayTs = today.getTime()
-    const startTs = startDate.getTime()
-    const endTs = endDate.getTime()
-
-    if (todayTs > endTs) {
-        status = 'ENDED'
-        dDay = 'END'
-    } else if (todayTs >= startTs && todayTs <= endTs) {
-        status = 'ONGOING'
-        dDay = 'NOW' // Or D-Day? usually ONGOING events show "NOW" or "Ing"
-        // If it's the exact start day, maybe D-Day is better?
-        // User asked for "D-Day". Let's see. 
-        // Usually ONGOING implies it has started. 
-        // If today is start day, it is technically D-Day.
-        if (todayTs === startTs) dDay = 'D-Day'
-        else dDay = 'NOW'
-    } else {
-        status = 'UPCOMING'
-        const diffTime = startTs - todayTs
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        dDay = diffDays === 0 ? 'D-Day' : `D-${diffDays}`
+        if (isNaN(todayTs) || isNaN(startTs)) {
+            dDay = 'ERR'
+            status = 'UPCOMING'
+        } else {
+            if (todayTs > endTs) {
+                status = 'ENDED'
+                dDay = 'END'
+            } else if (todayTs >= startTs && todayTs <= endTs) {
+                status = 'ONGOING'
+                if (todayTs === startTs) {
+                    dDay = 'D-Day'
+                } else {
+                    dDay = 'NOW'
+                }
+            } else {
+                status = 'UPCOMING'
+                // Future
+                const diffTime = startTs - todayTs
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+                dDay = diffDays === 0 ? 'D-Day' : `D-${diffDays}`
+            }
+        }
+    } catch (e) {
+        console.error("Date error", e)
+        dDay = 'ERR'
     }
 
     const isSchool = festival.type?.startsWith('school_')
