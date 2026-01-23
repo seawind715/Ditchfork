@@ -68,7 +68,9 @@ export default async function ReviewDetailPage({ params }) {
                     <div className="container review-header">
                         <div style={{
                             width: '300px',
-                            height: '300px',
+                            height: 'auto',
+                            aspectRatio: primaryReview.category === 'music' ? '1/1' : '2/3',
+                            aspectRatio: primaryReview.category === 'music' ? '1/1' : '2/3',
                             flexShrink: 0,
                             position: 'relative',
                             border: '1px solid var(--border)',
@@ -140,6 +142,22 @@ export default async function ReviewDetailPage({ params }) {
                                     </span>
                                 ))} <span style={{ fontSize: '1rem', color: '#666', fontStyle: 'normal', marginLeft: '0.5rem' }}>({primaryReview.release_year || 'Unknown'})</span>
                             </div>
+
+                            {/* Movie Overview */}
+                            {primaryReview.category === 'movie' && primaryReview.movie_metadata?.overview && (
+                                <div style={{ fontSize: '1rem', lineHeight: 1.6, color: '#ccc', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                                    <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--primary)', fontSize: '0.9rem', textTransform: 'uppercase' }}>Introduction</h4>
+                                    {primaryReview.movie_metadata.overview}
+                                </div>
+                            )}
+
+                            {/* Movie Overview */}
+                            {primaryReview.category === 'movie' && primaryReview.movie_metadata?.overview && (
+                                <div style={{ fontSize: '1rem', lineHeight: 1.6, color: '#ccc', marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                                    <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--primary)', fontSize: '0.9rem', textTransform: 'uppercase' }}>Introduction</h4>
+                                    {primaryReview.movie_metadata.overview}
+                                </div>
+                            )}
 
                             {/* Aggregated Score Badge if multiple */}
                             {allReviews?.length > 1 && (

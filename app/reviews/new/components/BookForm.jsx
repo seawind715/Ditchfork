@@ -31,7 +31,7 @@ export default function BookForm({
                     <input
                         value={bookTitle}
                         onChange={e => setBookTitle(e.target.value)}
-                        placeholder="예: 채식주의자"
+                        placeholder="예: 채식주의자 (한글 입력)"
                         required
                     />
                 </div>
@@ -40,7 +40,7 @@ export default function BookForm({
                     <input
                         value={bookAuthor}
                         onChange={e => setBookAuthor(e.target.value)}
-                        placeholder="예: 한강"
+                        placeholder="예: 한강 (한글 입력)"
                         required
                     />
                 </div>
