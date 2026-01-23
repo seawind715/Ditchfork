@@ -34,6 +34,7 @@ export default async function ReviewsPage({ searchParams }) {
         // Fetching more rows to ensure we have enough groups
         // This is valid for small-medium scale.
         .range(0, (page * perPage * 5) - 1) // Fetch 5x rows to be safe for grouping
+        .eq('category', 'music')
 
     if (genre) {
         query = query.eq('genre', genre)
@@ -70,7 +71,7 @@ export default async function ReviewsPage({ searchParams }) {
     return (
         <div className="container section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h1>{search ? `'${search}' 검색 결과` : 'Reviews'}</h1>
+                <h1>{search ? `'${search}' 검색 결과` : 'Album Reviews'}</h1>
                 <Link href="/reviews/new" className="btn">
                     + 리뷰 작성
                 </Link>

@@ -166,43 +166,46 @@ export default async function ReviewDetailPage({ params }) {
                                 </div>
                             )}
 
-                            {/* Streaming Links */}
+                            {/* Streaming Links (Music Only) */}
                             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                                {/* ... Streaming Links ... */}
-                                <a
-                                    href={primaryReview.spotify_url || `https://open.spotify.com/search/${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title={primaryReview.spotify_url ? "Listen on Spotify" : "Search on Spotify"}
-                                    style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
-                                >
-                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.502 17.302c-.218.358-.684.471-1.038.252-2.853-1.743-6.444-2.138-10.673-1.171-.409.092-.818-.162-.911-.571-.093-.409.162-.818.571-.911 4.634-1.06 8.59-.611 11.791 1.344.354.218.468.683.26 1.057zm1.469-3.262c-.275.447-.859.593-1.306.318-3.265-2.006-8.243-2.589-12.103-1.417-.502.152-1.032-.132-1.185-.634-.152-.501.134-1.03.633-1.183 4.416-1.341 9.907-.694 13.644 1.604.448.275.594.859.317 1.312zm.127-3.41c-3.916-2.325-10.373-2.54-14.127-1.4c-.599.182-1.237-.164-1.419-.763-.182-.599.164-1.237.763-1.419 4.309-1.308 11.442-1.053 15.918 1.603.539.32.715 1.018.395 1.557-.319.539-1.017.716-1.556.397z" />
-                                    </svg>
-                                </a>
-                                <a
-                                    href={primaryReview.apple_music_url || `https://music.apple.com/us/search?term=${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title={primaryReview.apple_music_url ? "Listen on Apple Music" : "Search on Apple Music"}
-                                    style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
-                                >
-                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                                        <path d="M19.467 11.467h-2.133v-1.733c0-.4.267-.667.667-.667h1.467V7.333h-1.467c-1.467 0-2.4 1-2.4 2.4v1.734h-1.334v1.733h1.334v5.4c0 1.4.933 2.4 2.4 2.4h1.467v-1.734h-1.467c-.4 0-.667-.267-.667-.667v-5.4h2.134l-.001-1.733zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
-                                        <path d="M12.5 7.5c-.828 0-1.5.672-1.5 1.5v4.613c-.31-.137-.648-.213-1-.213-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5V10.5h2V9c0-.828-.672-1.5-1.5-1.5z" />
-                                    </svg>
-                                </a>
-                                <a
-                                    href={primaryReview.youtube_music_url || `https://music.youtube.com/search?q=${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title={primaryReview.youtube_music_url ? "Listen on YouTube Music" : "Search on YouTube Music"}
-                                    style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
-                                >
-                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-12.5v9l6-4.5-6-4.5z" />
-                                    </svg>
-                                </a>
+                                {primaryReview.category === 'music' && (
+                                    <>
+                                        <a
+                                            href={primaryReview.spotify_url || `https://open.spotify.com/search/${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title={primaryReview.spotify_url ? "Listen on Spotify" : "Search on Spotify"}
+                                            style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
+                                        >
+                                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.502 17.302c-.218.358-.684.471-1.038.252-2.853-1.743-6.444-2.138-10.673-1.171-.409.092-.818-.162-.911-.571-.093-.409.162-.818.571-.911 4.634-1.06 8.59-.611 11.791 1.344.354.218.468.683.26 1.057zm1.469-3.262c-.275.447-.859.593-1.306.318-3.265-2.006-8.243-2.589-12.103-1.417-.502.152-1.032-.132-1.185-.634-.152-.501.134-1.03.633-1.183 4.416-1.341 9.907-.694 13.644 1.604.448.275.594.859.317 1.312zm.127-3.41c-3.916-2.325-10.373-2.54-14.127-1.4c-.599.182-1.237-.164-1.419-.763-.182-.599.164-1.237.763-1.419 4.309-1.308 11.442-1.053 15.918 1.603.539.32.715 1.018.395 1.557-.319.539-1.017.716-1.556.397z" />
+                                            </svg>
+                                        </a>
+                                        <a
+                                            href={primaryReview.apple_music_url || `https://music.apple.com/us/search?term=${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title={primaryReview.apple_music_url ? "Listen on Apple Music" : "Search on Apple Music"}
+                                            style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
+                                        >
+                                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                                <path d="M19.467 11.467h-2.133v-1.733c0-.4.267-.667.667-.667h1.467V7.333h-1.467c-1.467 0-2.4 1-2.4 2.4v1.734h-1.334v1.733h1.334v5.4c0 1.4.933 2.4 2.4 2.4h1.467v-1.734h-1.467c-.4 0-.667-.267-.667-.667v-5.4h2.134l-.001-1.733zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
+                                                <path d="M12.5 7.5c-.828 0-1.5.672-1.5 1.5v4.613c-.31-.137-.648-.213-1-.213-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5V10.5h2V9c0-.828-.672-1.5-1.5-1.5z" />
+                                            </svg>
+                                        </a>
+                                        <a
+                                            href={primaryReview.youtube_music_url || `https://music.youtube.com/search?q=${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title={primaryReview.youtube_music_url ? "Listen on YouTube Music" : "Search on YouTube Music"}
+                                            style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
+                                        >
+                                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-12.5v9l6-4.5-6-4.5z" />
+                                            </svg>
+                                        </a>
+                                    </>
+                                )}
 
                                 {/* Add Review Button */}
                                 <Link

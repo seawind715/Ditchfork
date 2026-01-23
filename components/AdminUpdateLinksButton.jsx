@@ -12,6 +12,7 @@ export default function AdminUpdateLinksButton({ review, userEmail }) {
     const isAdmin = userEmail?.toLowerCase() === adminEmail.toLowerCase()
 
     if (!isAdmin) return null
+    if (review?.category && review.category !== 'music') return null // 링크 동기화는 앨범(iTunes) 전용
 
     const updateLinks = async () => {
         setLoading(true)
