@@ -29,10 +29,10 @@ export default function MovieForm({
     return (
         <>
             <div style={{ background: '#1a1a1a', padding: '1.5rem', border: '1px solid #333' }}>
-                <label style={{ color: 'var(--primary)', fontWeight: 'bold' }}>영화 검색 (제목 / 감독)</label>
+                <label style={{ color: 'var(--primary)', fontWeight: 'bold' }}>영화 검색 (제목만 입력해주세요)</label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <input
-                        placeholder="예: 기생충 봉준호"
+                        placeholder="예: 기생충 (감독명 제외)"
                         value={movieTitle}
                         onChange={e => setMovieTitle(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleSearchMovie())}
