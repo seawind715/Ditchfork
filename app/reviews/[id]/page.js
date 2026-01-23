@@ -150,6 +150,7 @@ export default async function ReviewDetailPage({ params }) {
 
                             {/* Streaming Links */}
                             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                {/* ... Streaming Links ... */}
                                 <a
                                     href={primaryReview.spotify_url || `https://open.spotify.com/search/${encodeURIComponent(primaryReview.artist_name + ' ' + primaryReview.album_name)}`}
                                     target="_blank"
@@ -184,6 +185,18 @@ export default async function ReviewDetailPage({ params }) {
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-12.5v9l6-4.5-6-4.5z" />
                                     </svg>
                                 </a>
+
+                                {/* Add Review Button */}
+                                <Link
+                                    href={primaryReview.category === 'movie'
+                                        ? `/reviews/new?mode=movie&title=${encodeURIComponent(primaryReview.album_name)}`
+                                        : `/reviews/new?mode=music&artist=${encodeURIComponent(primaryReview.artist_name)}&album=${encodeURIComponent(primaryReview.album_name)}`
+                                    }
+                                    className="btn btn-outline"
+                                    style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}
+                                >
+                                    <span>✍️ 이 {primaryReview.category === 'movie' ? '영화' : '앨범'} 리뷰 쓰기</span>
+                                </Link>
                             </div>
                         </div>
                     </div>

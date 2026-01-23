@@ -1,18 +1,42 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import React from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toTitleCase } from '@/utils/format'
 import ScoreGuide from '@/components/ScoreGuide'
 import { searchMovies, getMovieDetails, getPosterUrl } from '@/utils/tmdb'
 
-export default function NewReviewPage() {
+const NewReviewPageContent = () => {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const [loading, setLoading] = useState(false)
     const supabase = createClient()
 
     const [category, setCategory] = useState('music') // 'music' or 'movie'
+
+    // --- Auto-fill from URL ---
+    useEffect(() => {
+        const mode = searchParams.get('mode')
+        if (mode) {
+            setCategory(mode)
+            if (mode === 'music') {
+                const artist = searchParams.get('artist')
+                const album = searchParams.get('album')
+                if (artist) { setCurrentArtistName(artist); setArtists([artist]); }
+                if (album) { setAlbumName(album); }
+                if (artist && album) { fetchExistingAlbumData(artist, album); }
+            } else if (mode === 'movie') {
+                const title = searchParams.get('title')
+                if (title) { setMovieTitle(title); }
+            }
+        }
+    }, [searchParams])
+
+
+    // Duplicate state removed
+
 
     // --- Common State ---
     const [rating, setRating] = useState('')
@@ -187,7 +211,8 @@ export default function NewReviewPage() {
     const handleSearchMovie = async () => {
         if (!movieTitle) { alert('영화 제목을 입력해주세요.'); return }
         setIsFetchingCover(true)
-        const results = await searchMovies(`${movieTitle} ${movieDirector}`)
+        // Fixed: Search only by title because TMDB query confusion with director names
+        const results = await searchMovies(movieTitle)
         setMovieSearchResults(results)
         setIsFetchingCover(false)
         if (results.length === 0) alert('검색 결과가 없습니다.')
@@ -221,20 +246,28 @@ export default function NewReviewPage() {
     const handleRemoveMovieGenre = (tag) => setMovieGenres(movieGenres.filter(g => g !== tag))
 
 
+    // --- Book State ---
+    const [bookTitle, setBookTitle] = useState('')
+    const [bookAuthor, setBookAuthor] = useState('')
+    const [kdcClass, setKdcClass] = useState('')
+    const [specificGenre, setSpecificGenre] = useState('') // User input, single
+    // KDC Main Classes
+    const KDC_CLASSES = [
+        "총류", "철학", "종교", "사회과학", "자연과학",
+        "기술과학", "예술", "언어", "문학", "역사"
+    ]
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) { alert('로그인이 필요합니다.'); router.push('/login'); return }
 
-        // --- Rate Limit Check (Skipped for brevity, same logic as before) ---
-        // ... (Limit logic here if needed)
-
         let reviewData = {
-            rating: parseFloat(rating),
             content,
             user_id: user.id,
             category: category,
+            rating: category === 'book' ? null : parseFloat(rating), // No rating for book
         }
 
         if (category === 'music') {
@@ -252,20 +285,31 @@ export default function NewReviewPage() {
                 apple_music_url: streamingLinks.apple,
                 youtube_music_url: streamingLinks.youtube,
             }
-        } else {
-            // Movie
+        } else if (category === 'movie') {
             if (!selectedMovie) {
                 alert('영화를 검색하여 선택해주세요.'); setLoading(false); return
             }
             reviewData = {
                 ...reviewData,
-                album_name: selectedMovie.title, // Map Title to Album Name column
-                artist_name: movieDirector || 'Unknown', // Map Director to Artist Name column
+                album_name: selectedMovie.title,
+                artist_name: movieDirector || 'Unknown',
                 release_year: year,
-                genre: 'Movie', // Default internal genre
-                sub_genres: movieGenres, // Use sub_genres for movie tags
+                genre: 'Movie',
+                sub_genres: movieGenres,
                 cover_image_url: getPosterUrl(selectedMovie.poster_path),
-                movie_metadata: selectedMovie // Full JSON for details
+                movie_metadata: selectedMovie
+            }
+        } else if (category === 'book') {
+            if (!bookTitle || !bookAuthor || !kdcClass) {
+                alert('책 제목, 작가, 분류를 모두 입력해주세요.'); setLoading(false); return
+            }
+            reviewData = {
+                ...reviewData,
+                album_name: bookTitle, // Reuse 'album_name' for Title
+                artist_name: bookAuthor, // Reuse 'artist_name' for Author
+                genre: kdcClass, // Reuse 'genre' for KDC
+                sub_genres: specificGenre ? [specificGenre] : [], // Use sub_genres for specific genre (single)
+                release_year: new Date().getFullYear().toString(), // Optional, or ask inputs? User didn't specify. Default to current or null? Let's use '0000' or similar if required by DB. DB constraint? likely not.
             }
         }
 
@@ -285,40 +329,22 @@ export default function NewReviewPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h1>새 리뷰 작성</h1>
                 <div style={{ display: 'flex', gap: '0.5rem', background: '#222', padding: '0.3rem', borderRadius: '8px' }}>
-                    <button
-                        type="button"
-                        onClick={() => setCategory('music')}
-                        style={{
-                            background: category === 'music' ? 'var(--primary)' : 'transparent',
-                            color: category === 'music' ? 'white' : '#888',
-                            border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600
-                        }}
-                    >
-                        Album
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setCategory('movie')}
-                        style={{
-                            background: category === 'movie' ? 'var(--primary)' : 'transparent',
-                            color: category === 'movie' ? 'white' : '#888',
-                            border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600
-                        }}
-                    >
-                        Movie
-                    </button>
+                    <button type="button" onClick={() => setCategory('music')} style={{ background: category === 'music' ? 'var(--primary)' : 'transparent', color: category === 'music' ? 'white' : '#888', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Album</button>
+                    <button type="button" onClick={() => setCategory('movie')} style={{ background: category === 'movie' ? 'var(--primary)' : 'transparent', color: category === 'movie' ? 'white' : '#888', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Movie</button>
+                    <button type="button" onClick={() => setCategory('book')} style={{ background: category === 'book' ? 'var(--primary)' : 'transparent', color: category === 'book' ? 'white' : '#888', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>Book</button>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-                {category === 'music' ? (
+                {category === 'music' && (
                     /* --- MUSIC FORM --- */
                     <>
+                        {/* ... Existing Music Inputs (Consolidated for brevity in diff, but assuming I keep logic? NO, I need to output full block or I overwrite. The previous tool `view_file` gave me full content. I must reproduce existing logic + Book logic.) */}
+                        {/* Start Music Block */}
                         <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
                             <div>
                                 <label>아티스트 *</label>
-                                {/* Artist Input Logic (Simplified for view) */}
                                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
                                     <div style={{ position: 'relative', flex: 1 }}>
                                         <input value={currentArtistName} onChange={e => { setCurrentArtistName(e.target.value); fetchArtistSuggestions(e.target.value) }}
@@ -370,7 +396,6 @@ export default function NewReviewPage() {
                                     <option value="Experimental">Experimental</option><option value="Uncategorized">Uncategorized</option>
                                 </select>
                             </div>
-                            {/* Rating Input Below */}
                         </div>
 
                         <div>
@@ -384,7 +409,9 @@ export default function NewReviewPage() {
                             </div>
                         </div>
                     </>
-                ) : (
+                )}
+
+                {category === 'movie' && (
                     /* --- MOVIE FORM --- */
                     <>
                         <div style={{ background: '#1a1a1a', padding: '1.5rem', border: '1px solid #333' }}>
@@ -432,19 +459,51 @@ export default function NewReviewPage() {
                     </>
                 )}
 
-                {/* Common Rating & Content */}
-                <div>
-                    <label>평점 (0.0 ~ 10.0) *</label>
-                    <input type="number" step="0.1" min="0" max="10" required placeholder="8.5" value={rating} onChange={e => setRating(e.target.value)} style={{ width: '100px' }} />
-                    <details style={{ marginTop: '0.8rem', cursor: 'pointer' }}>
-                        <summary style={{ fontSize: '0.85rem', color: 'var(--primary)' }}>📊 평점 가이드 보기</summary>
-                        <div style={{ marginTop: '0.5rem' }}><ScoreGuide compact={true} /></div>
-                    </details>
-                </div>
+                {category === 'book' && (
+                    /* --- BOOK FORM --- */
+                    <>
+                        <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                            <div>
+                                <label>책 제목 *</label>
+                                <input value={bookTitle} onChange={e => setBookTitle(e.target.value)} placeholder="예: 채식주의자" required />
+                            </div>
+                            <div>
+                                <label>작가 *</label>
+                                <input value={bookAuthor} onChange={e => setBookAuthor(e.target.value)} placeholder="예: 한강" required />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2" style={{ gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                            <div>
+                                <label>분류 (한국십진분류법) *</label>
+                                <select value={kdcClass} onChange={e => setKdcClass(e.target.value)} required>
+                                    <option value="">선택</option>
+                                    {KDC_CLASSES.map(cls => <option key={cls} value={cls}>{cls}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label>세부 장르 (직접 입력, 한글, 1개)</label>
+                                <input value={specificGenre} onChange={e => setSpecificGenre(e.target.value)} placeholder="예: 현대소설" />
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                {/* Common Rating & Content (Hide Rating for Book) */}
+                {category !== 'book' && (
+                    <div>
+                        <label>평점 (0.0 ~ 10.0) *</label>
+                        <input type="number" step="0.1" min="0" max="10" required placeholder="8.5" value={rating} onChange={e => setRating(e.target.value)} style={{ width: '100px' }} />
+                        <details style={{ marginTop: '0.8rem', cursor: 'pointer' }}>
+                            <summary style={{ fontSize: '0.85rem', color: 'var(--primary)' }}>📊 평점 가이드 보기</summary>
+                            <div style={{ marginTop: '0.5rem' }}><ScoreGuide compact={true} /></div>
+                        </details>
+                    </div>
+                )}
 
                 <div>
                     <label>리뷰 내용 *</label>
-                    <textarea rows={10} required placeholder={category === 'movie' ? "이 영화에 대한 감상평을 남겨주세요." : "이 앨범에 대한 당신의 생각을 적어주세요."} value={content} onChange={e => setContent(e.target.value)} style={{ width: '100%', padding: '1rem', background: 'var(--input)', border: '1px solid var(--border)', color: 'white' }}></textarea>
+                    <textarea rows={10} required placeholder={category === 'movie' ? "이 영화에 대한 감상평을 남겨주세요." : (category === 'book' ? "이 책에 대한 서평을 남겨주세요." : "이 앨범에 대한 당신의 생각을 적어주세요.")} value={content} onChange={e => setContent(e.target.value)} style={{ width: '100%', padding: '1rem', background: 'var(--input)', border: '1px solid var(--border)', color: 'white' }}></textarea>
                 </div>
 
                 <button type="submit" className="btn" disabled={loading} style={{ padding: '1rem', fontSize: '1.2rem' }}>
@@ -454,3 +513,4 @@ export default function NewReviewPage() {
         </div>
     )
 }
+

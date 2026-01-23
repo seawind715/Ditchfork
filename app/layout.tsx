@@ -16,6 +16,14 @@ export const metadata = {
     description: "DGHS 문화 생활 커뮤니티 디치포크",
     type: "website",
     locale: "ko_KR",
+    images: [
+      {
+        url: "/logo.png", // Ensure this file exists in public/
+        width: 800,
+        height: 600,
+        alt: "Ditchfork Logo",
+      },
+    ],
   },
   verification: {
     google: "TB2liyNSS_7Q-Y-UBGEFtE3do99MkpiVA9vy7m9TqjY",
