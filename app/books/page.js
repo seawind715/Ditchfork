@@ -5,7 +5,7 @@ import { groupReviews } from '@/utils/reviewAggregation'
 
 export const revalidate = 0
 
-export default async function MoviesPage({ searchParams }) {
+export default async function BooksPage({ searchParams }) {
     const supabase = await createClient()
     const page = Number((await searchParams).page) || 1
     const perPage = 40
@@ -19,7 +19,7 @@ export default async function MoviesPage({ searchParams }) {
                 username
             )
         `)
-        .eq('category', 'movie') // Filter for movies
+        .eq('category', 'book') // Filter for books
         .order('created_at', { ascending: false })
         .range(0, (page * perPage * 5) - 1)
 
@@ -50,8 +50,8 @@ export default async function MoviesPage({ searchParams }) {
     return (
         <div className="container section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h1>{search ? `'${search}' 검색 결과` : 'Movie Reviews'}</h1>
-                <Link href="/reviews/new?mode=movie" className="btn">
+                <h1>{search ? `'${search}' 검색 결과` : 'Book Reviews'}</h1>
+                <Link href="/reviews/new?mode=book" className="btn">
                     + 리뷰 작성
                 </Link>
             </div>
@@ -63,7 +63,7 @@ export default async function MoviesPage({ searchParams }) {
                     {reviews?.length === 0 ? (
                         <div style={{ padding: '4rem', textAlign: 'center', background: '#1a1a1a', border: '1px solid #333' }}>
                             <p>
-                                {page > 1 ? '더 이상 리뷰가 없습니다.' : '아직 작성된 영화 리뷰가 없습니다.'}
+                                {page > 1 ? '더 이상 리뷰가 없습니다.' : '아직 작성된 도서 리뷰가 없습니다.'}
                             </p>
                             {page === 1 && <p style={{ marginTop: '1rem' }}>첫 번째 리뷰의 주인공이 되어보세요!</p>}
                         </div>
@@ -78,7 +78,7 @@ export default async function MoviesPage({ searchParams }) {
                             {/* Pagination Controls */}
                             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '3rem' }}>
                                 <Link
-                                    href={`/movies?page=${page - 1}${search ? `&q=${search}` : ''}`}
+                                    href={`/books?page=${page - 1}${search ? `&q=${search}` : ''}`}
                                     className={`btn btn-outline ${!hasPrev ? 'disabled' : ''}`}
                                     style={{ pointerEvents: hasPrev ? 'auto' : 'none', opacity: hasPrev ? 1 : 0.5 }}
                                 >
@@ -88,7 +88,7 @@ export default async function MoviesPage({ searchParams }) {
                                     {page}
                                 </span>
                                 <Link
-                                    href={`/movies?page=${page + 1}${search ? `&q=${search}` : ''}`}
+                                    href={`/books?page=${page + 1}${search ? `&q=${search}` : ''}`}
                                     className={`btn btn-outline ${!hasNext ? 'disabled' : ''}`}
                                     style={{ pointerEvents: hasNext ? 'auto' : 'none', opacity: hasNext ? 1 : 0.5 }}
                                 >

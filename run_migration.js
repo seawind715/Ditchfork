@@ -4,7 +4,7 @@ const path = require('path');
 
 // Manually parse .env.local to get connection string
 const envPath = path.join(__dirname, '.env.local');
-let connectionString = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'; // Fallback
+let connectionString = 'postgresql://postgres:postgres@127.0.0.1:5432/postgres'; // Fallback
 
 if (fs.existsSync(envPath)) {
     const envContent = fs.readFileSync(envPath, 'utf8');
