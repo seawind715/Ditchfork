@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Manually parse .env.local to get connection string
-const envPath = path.join(__dirname, '.env.local');
+const envPath = path.join(__dirname, '..', '.env.local');
 let connectionString = 'postgresql://postgres:postgres@127.0.0.1:5432/postgres'; // Fallback
 
 if (fs.existsSync(envPath)) {
@@ -34,7 +34,7 @@ const client = new Client({
 async function runMigration() {
     try {
         await client.connect();
-        const sql = fs.readFileSync(path.join(__dirname, 'db_scripts', 'add_book_support.sql'), 'utf8');
+        const sql = fs.readFileSync(path.join(__dirname, '..', 'db_scripts', 'add_book_support.sql'), 'utf8');
         await client.query(sql);
         console.log('Migration successful!');
     } catch (err) {

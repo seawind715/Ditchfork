@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load env vars manually
-const envPath = path.resolve(__dirname, '.env.local');
+const envPath = path.resolve(__dirname, '..', '.env.local');
 const envConfig = fs.readFileSync(envPath, 'utf8');
 envConfig.split('\n').forEach(line => {
     const [key, value] = line.split('=');
