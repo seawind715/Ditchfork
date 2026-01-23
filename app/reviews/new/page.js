@@ -514,3 +514,10 @@ const NewReviewPageContent = () => {
     )
 }
 
+export default function NewReviewPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <NewReviewPageContent />
+        </React.Suspense>
+    )
+}
