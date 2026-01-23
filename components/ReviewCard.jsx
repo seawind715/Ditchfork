@@ -18,7 +18,7 @@ export default function ReviewCard({ review }) {
                 display: 'flex',
                 flexDirection: 'column'
             }}>
-                <div style={{ position: 'relative', aspectRatio: '1/1', width: '100%', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', aspectRatio: review.category === 'music' ? '1/1' : '2/3', width: '100%', overflow: 'hidden' }}>
                     {review.is_cover_hidden ? (
                         <div style={{
                             width: '100%',
