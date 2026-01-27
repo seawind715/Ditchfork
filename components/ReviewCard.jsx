@@ -75,11 +75,7 @@ export default function ReviewCard({ review }) {
                         margin: 0
                     }}>
                         {review.album_name}
-                        {review.release_year && (
-                            <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 400, marginLeft: '0.5rem' }}>
-                                ({review.release_year})
-                            </span>
-                        )}
+
                     </h3>
                     <div className="card-author" style={{
                         marginBottom: '0.5rem',
