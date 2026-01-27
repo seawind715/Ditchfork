@@ -26,6 +26,9 @@ export async function generateMetadata({ params }) {
         return {
             title: `${review.album_name} - ${review.artist_name} | Review | Ditchfork`,
             description: `${review.artist_name}의 앨범 ${review.album_name}에 대한 심층 비평을 확인해보세요.`,
+            openGraph: {
+                images: review.cover_image_url ? [{ url: review.cover_image_url }] : [],
+            },
         }
     } catch (e) {
         return { title: 'Ditchfork' }
