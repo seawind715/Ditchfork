@@ -10,7 +10,7 @@ export default function AdminFeatureButton({ reviewId, userEmail }) {
     const supabase = createClient()
 
     // Hide if not admin
-    if (userEmail !== 'id01035206992@gmail.com') {
+    if (userEmail?.toLowerCase() !== 'id01035206992@gmail.com') {
         return null
     }
 
