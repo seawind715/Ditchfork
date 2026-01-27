@@ -9,6 +9,7 @@ export const metadata = {
     default: "디치포크 Ditchfork - DGHS 문화 생활 커뮤니티",
     template: "%s | 디치포크 Ditchfork"
   },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://ditchfork.vercel.app'),
   description: "DGHS 문화 생활 커뮤니티 디치포크(Ditchfork). 음악 취향 공유부터 학교 축제 정보까지.",
   keywords: ["디치포크", "Ditchfork", "DGHS", "동탄국제고", "동국고", "음악 리뷰", "앨범 추천", "학교 축제", "문화 생활"],
   openGraph: {
