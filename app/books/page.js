@@ -27,6 +27,10 @@ export default async function BooksPage({ searchParams }) {
         query = query.or(`album_name.ilike.%${search}%,artist_name.ilike.%${search}%`)
     }
 
+    if (searchParams.genre) {
+        query = query.eq('genre', searchParams.genre)
+    }
+
     let rawReviews = []
     let error = null
     try {
@@ -54,6 +58,37 @@ export default async function BooksPage({ searchParams }) {
                 <Link href="/reviews/new?mode=book" className="btn">
                     + 리뷰 작성
                 </Link>
+            </div>
+
+            {/* KDC Genre Filter */}
+            <div style={{ marginBottom: '3rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <Link
+                    href="/books"
+                    className="btn btn-outline"
+                    style={{
+                        padding: '0.4rem 0.8rem',
+                        fontSize: '0.9rem',
+                        background: !searchParams.genre ? 'var(--accent)' : 'transparent',
+                        color: !searchParams.genre ? 'var(--background)' : 'var(--accent)'
+                    }}
+                >
+                    All
+                </Link>
+                {["총류", "철학", "종교", "사회과학", "자연과학", "기술과학", "예술", "언어", "문학", "역사"].map(g => (
+                    <Link
+                        key={g}
+                        href={`/books?genre=${g}`}
+                        className="btn btn-outline"
+                        style={{
+                            padding: '0.4rem 0.8rem',
+                            fontSize: '0.9rem',
+                            background: searchParams.genre === g ? 'var(--accent)' : 'transparent',
+                            color: searchParams.genre === g ? 'var(--background)' : 'var(--accent)'
+                        }}
+                    >
+                        {g}
+                    </Link>
+                ))}
             </div>
 
             {error ? (

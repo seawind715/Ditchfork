@@ -219,7 +219,7 @@ const NewReviewPageContent = () => {
             content,
             user_id: user.id,
             category: category,
-            rating: category === 'book' ? null : parseFloat(rating),
+            rating: parseFloat(rating),
         }
 
         if (category === 'music') {
@@ -324,6 +324,7 @@ const NewReviewPageContent = () => {
                         bookAuthor={bookAuthor} setBookAuthor={setBookAuthor}
                         kdcClass={kdcClass} setKdcClass={setKdcClass}
                         specificGenre={specificGenre} setSpecificGenre={setSpecificGenre}
+                        rating={rating} setRating={setRating}
                     />
                 )}
 

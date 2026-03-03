@@ -17,11 +17,14 @@ const KDC_CLASSES = [
  * @param {string} props.specificGenre - 세부 장르 (직접 입력)
  * @param {Function} props.setSpecificGenre - 세부 장르 설정 함수
  */
+import StarRating from '@/components/StarRating'
+
 export default function BookForm({
     bookTitle, setBookTitle,
     bookAuthor, setBookAuthor,
     kdcClass, setKdcClass,
-    specificGenre, setSpecificGenre
+    specificGenre, setSpecificGenre,
+    rating, setRating
 }) {
     return (
         <>
@@ -61,6 +64,13 @@ export default function BookForm({
                         onChange={e => setSpecificGenre(e.target.value)}
                         placeholder="예: 현대소설"
                     />
+                </div>
+            </div>
+
+            <div style={{ marginTop: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem' }}>별점 (5점 만점) *</label>
+                <div style={{ background: '#222', padding: '1rem', borderRadius: '8px', display: 'inline-block' }}>
+                    <StarRating rating={rating} setRating={setRating} size={40} />
                 </div>
             </div>
         </>

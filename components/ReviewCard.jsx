@@ -18,7 +18,7 @@ export default function ReviewCard({ review }) {
                 display: 'flex',
                 flexDirection: 'column'
             }}>
-                <div style={{ position: 'relative', aspectRatio: review.category === 'music' ? '1/1' : '2/3', width: '100%', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', aspectRatio: review.category === 'music' ? '1/1' : '2/3', width: '100%', overflow: 'hidden', display: review.category === 'book' ? 'none' : 'block' }}>
                     {review.is_cover_hidden ? (
                         <div style={{
                             width: '100%',
@@ -94,7 +94,11 @@ export default function ReviewCard({ review }) {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{review.rating?.toFixed(1) || '0.0'}</span>
+                            {review.category === 'book' ? (
+                                <StarRatingDisplay rating={review.rating} />
+                            ) : (
+                                <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{review.rating?.toFixed(1) || '0.0'}</span>
+                            )}
                             {review.review_count > 1 && (
                                 <span style={{
                                     fontSize: '0.7rem',
@@ -114,3 +118,16 @@ export default function ReviewCard({ review }) {
         </Link>
     )
 }
+
+function StarRatingDisplay({ rating }) {
+    return (
+        <span style={{ color: 'gold', fontSize: '1.2rem', letterSpacing: '2px' }}>
+            {'★'.repeat(Math.floor(rating))}
+            {rating % 1 >= 0.5 ? '★' : ''}
+            <span style={{ color: '#444' }}>
+                {'★'.repeat(5 - Math.ceil(rating))}
+            </span>
+        </span>
+    )
+}
+

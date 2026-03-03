@@ -6,6 +6,7 @@ import AdminDeleteButton from '@/components/AdminDeleteButton'
 import AdminFeatureButton from '@/components/AdminFeatureButton'
 import AdminUpdateLinksButton from '@/components/AdminUpdateLinksButton'
 import CommentSection from '@/components/CommentSection'
+import StarRating from '@/components/StarRating'
 
 export const revalidate = 0
 
@@ -229,7 +230,11 @@ export default async function ReviewDetailPage({ params }) {
                             {/* Reviewer Meta */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
                                 <div style={{ color: 'var(--primary)', fontSize: '2.5rem', fontWeight: 900, lineHeight: 1 }}>
-                                    {rev.rating?.toFixed(1) || '0.0'}
+                                    {rev.category === 'book' ? (
+                                        <StarRating rating={rev.rating} readOnly={true} size={40} />
+                                    ) : (
+                                        rev.rating?.toFixed(1) || '0.0'
+                                    )}
                                 </div>
                                 <div style={{ width: '1px', height: '30px', background: '#333' }}></div>
                                 <div style={{ flex: 1 }}>
